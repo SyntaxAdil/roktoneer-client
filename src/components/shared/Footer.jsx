@@ -51,11 +51,7 @@ const Footer = () => {
           <div className="lg:col-span-2 flex flex-col gap-4">
             <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase">Quick Links</h3>
             <ul className="flex flex-col gap-2.5 text-sm">
-              <li>
-                <Link href="/about" className="text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-colors">
-                  About Us
-                </Link>
-              </li>
+         
               <li>
                 <Link href="/donors" className="text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-colors">
                   Find Donors
@@ -67,7 +63,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-colors">
+                <Link href="#contact" className="text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-colors">
                   Contact
                 </Link>
               </li>
