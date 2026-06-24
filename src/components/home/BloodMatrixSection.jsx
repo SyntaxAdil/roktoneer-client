@@ -1,11 +1,11 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger  } from "../ui/dialog";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { AnimatedBeam } from "../ui/animated-beam";
-
-
 import React, { forwardRef, useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Heart, Info, Check, X } from "lucide-react";
+import { motion } from "motion/react";
 
 const BLOOD_GROUPS = ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"];
 
@@ -50,38 +50,65 @@ export default function BloodMatrixSection() {
 
   return (
     <section className="w-full pt-0 pb-20 bg-background flex flex-col items-center justify-center gap-12">
+      
+      {/* Header Section */}
       <div className="text-center max-w-2xl px-5 flex flex-col items-center gap-3">
-        <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+        <motion.h2 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl font-black tracking-tight text-foreground sm:text-4xl"
+        >
           Complete Compatibility <span className="text-red-600">Matrix</span>
-        </h2>
-        <p className="text-muted-foreground text-sm sm:text-base max-w-lg">
+        </motion.h2>
+        <motion.p 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-muted-foreground text-sm sm:text-base max-w-lg"
+        >
           Click any blood type to explore its full matching matrix. Universal pathways are actively animated below.
-        </p>
+        </motion.p>
       </div>
 
-      <div
+      {/* Interactive Grid Area */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
         className="relative flex h-[620px] w-full max-w-2xl items-center justify-center overflow-hidden rounded-3xl border border-zinc-200/80 bg-zinc-50/40 dark:border-zinc-800/80 dark:bg-zinc-900/20 p-6 sm:p-10 shadow-sm"
         ref={containerRef}
       >
         <div className="flex size-full flex-row items-center justify-between z-20 relative">
           
+          {/* Donors Column */}
           <div className="flex flex-col justify-between h-full items-center py-4">
             <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-4">Donors</span>
             <div className="flex flex-col gap-3">
-              {BLOOD_GROUPS.map((group) => (
+              {BLOOD_GROUPS.map((group, idx) => (
                 <Dialog key={`donor-${group}`}>
                   <DialogTrigger asChild>
-                    <Circle
-                      ref={(el) => (donorRefs.current[group] = el)}
-                      onClick={() => setSelectedGroup(group)}
-                      className={cn(
-                        group === "O-" 
-                          ? "border-red-500 bg-red-50 text-red-600 ring-4 ring-red-500/10 size-14 text-sm dark:bg-red-950/30" 
-                          : "border-zinc-200 dark:border-zinc-800 text-foreground dark:bg-zinc-900"
-                      )}
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: idx * 0.04 }}
                     >
-                      {group}
-                    </Circle>
+                      <Circle
+                        ref={(el) => (donorRefs.current[group] = el)}
+                        onClick={() => setSelectedGroup(group)}
+                        className={cn(
+                          group === "O-" 
+                            ? "border-red-500 bg-red-50 text-red-600 ring-4 ring-red-500/10 size-14 text-sm dark:bg-red-950/30" 
+                            : "border-zinc-200 dark:border-zinc-800 text-foreground dark:bg-zinc-900"
+                        )}
+                      >
+                        {group}
+                      </Circle>
+                    </motion.div>
                   </DialogTrigger>
                   <BloodDialogContent group={selectedGroup} />
                 </Dialog>
@@ -89,7 +116,14 @@ export default function BloodMatrixSection() {
             </div>
           </div>
 
-          <div className="hidden md:flex flex-col items-center justify-center gap-4 text-center max-w-[160px] bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200/60 dark:border-zinc-800 shadow-sm">
+          {/* Central Info Badge */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="hidden md:flex flex-col items-center justify-center gap-4 text-center max-w-[160px] bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200/60 dark:border-zinc-800 shadow-sm"
+          >
             <div className="p-2.5 bg-red-50 dark:bg-red-950/40 rounded-xl text-red-500">
               <Heart className="size-5 fill-current" />
             </div>
@@ -99,25 +133,33 @@ export default function BloodMatrixSection() {
                 Click any node to see who they can give to or receive from.
               </p>
             </div>
-          </div>
+          </motion.div>
 
+          {/* Receivers Column */}
           <div className="flex flex-col justify-between h-full items-center py-4">
             <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-4">Receivers</span>
             <div className="flex flex-col gap-3">
-              {BLOOD_GROUPS.map((group) => (
+              {BLOOD_GROUPS.map((group, idx) => (
                 <Dialog key={`rec-${group}`}>
                   <DialogTrigger asChild>
-                    <Circle
-                      ref={(el) => (receiverRefs.current[group] = el)}
-                      onClick={() => setSelectedGroup(group)}
-                      className={cn(
-                        group === "AB+" 
-                          ? "border-red-500 bg-red-50 text-red-600 ring-4 ring-red-500/10 size-14 text-sm dark:bg-red-950/30" 
-                          : "border-zinc-200 dark:border-zinc-800 text-foreground dark:bg-zinc-900"
-                      )}
+                    <motion.div
+                      initial={{ opacity: 0, x: 10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: idx * 0.04 }}
                     >
-                      {group}
-                    </Circle>
+                      <Circle
+                        ref={(el) => (receiverRefs.current[group] = el)}
+                        onClick={() => setSelectedGroup(group)}
+                        className={cn(
+                          group === "AB+" 
+                            ? "border-red-500 bg-red-50 text-red-600 ring-4 ring-red-500/10 size-14 text-sm dark:bg-red-950/30" 
+                            : "border-zinc-200 dark:border-zinc-800 text-foreground dark:bg-zinc-900"
+                        )}
+                      >
+                        {group}
+                      </Circle>
+                    </motion.div>
                   </DialogTrigger>
                   <BloodDialogContent group={selectedGroup} />
                 </Dialog>
@@ -127,6 +169,7 @@ export default function BloodMatrixSection() {
 
         </div>
 
+        {/* Animated Beams */}
         {isMounted && (
           <>
             <AnimatedBeam
@@ -178,7 +221,7 @@ export default function BloodMatrixSection() {
             />
           </>
         )}
-      </div>
+      </motion.div>
     </section>
   );
 }

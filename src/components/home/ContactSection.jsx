@@ -1,8 +1,8 @@
-
 "use client";
 
 import React, { useState } from "react";
 import { Phone, Mail, MapPin, Send, MessageSquare, CheckCircle2 } from "lucide-react";
+import { motion } from "motion/react";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -23,33 +23,49 @@ export default function ContactSection() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API request timeout
     await new Promise((resolve) => setTimeout(resolve, 1500));
     
     console.log("Contact Form Data:", formData);
     setIsSubmitting(false);
     setIsSubmitted(true);
     
-    // Reset form after submission
     setFormData({ name: "", email: "", phone: "", message: "" });
     setTimeout(() => setIsSubmitted(false), 4000);
   };
 
   return (
     <section className="w-full py-20 bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300" id="contact">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8 container">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 container">
         
         {/* Header Section */}
         <div className="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center gap-3">
-          <span className="text-xs font-bold uppercase tracking-widest text-red-500 bg-red-500/10 px-3 py-1 rounded-full">
+          <motion.span 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-xs font-bold uppercase tracking-widest text-red-500 bg-red-500/10 px-3 py-1 rounded-full"
+          >
             Get In Touch
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50"
+          >
             Let&apos;s Start a <span className="text-red-600">Conversation</span>
-          </h2>
-          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400">
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400"
+          >
             Have a question, project idea, or just want to say hello? Drop a message, and I&apos;ll get back to you as soon as possible.
-          </p>
+          </motion.p>
         </div>
 
         {/* Content Layout */}
@@ -57,8 +73,13 @@ export default function ContactSection() {
           
           {/* Left Column: Contact Cards */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
-            <div className="flex flex-col gap-6">
-              
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex flex-col gap-6"
+            >
               {/* Phone Card */}
               <div className="flex items-start gap-4 p-5 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md transition-all">
                 <div className="p-3 bg-red-50 dark:bg-red-950/40 rounded-xl text-red-600 shrink-0">
@@ -106,20 +127,31 @@ export default function ContactSection() {
                   <p className="text-xs text-zinc-400 dark:text-zinc-500">Open for remote & on-site syncs</p>
                 </div>
               </div>
-
-            </div>
+            </motion.div>
 
             {/* Micro Announcement Box */}
-            <div className="hidden lg:flex items-center gap-3 p-5 bg-zinc-700 text-zinc-100 rounded-2xl border border-zinc-800 dark:bg-zinc-900 dark:border-zinc-800 shadow-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="hidden lg:flex items-center gap-3 p-5 bg-zinc-700 text-zinc-100 rounded-2xl border border-zinc-800 dark:bg-zinc-900 dark:border-zinc-800 shadow-sm"
+            >
               <MessageSquare className="size-5 text-red-500 shrink-0 animate-pulse" />
               <p className="text-xs leading-relaxed font-medium">
                 Looking for regular freelance contracts or immediate software development collaborations? Let&apos;s connect directly!
               </p>
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Column: Contact Form */}
-          <div className="lg:col-span-7">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-7"
+          >
             <div className="relative bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-10 shadow-sm h-full flex flex-col justify-center">
               
               {isSubmitted ? (
@@ -226,7 +258,7 @@ export default function ContactSection() {
                 </form>
               )}
             </div>
-          </div>
+          </motion.div>
 
         </div>
 

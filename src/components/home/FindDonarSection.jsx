@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MapPin, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { Marquee } from "../ui/marquee";
+import { motion } from "motion/react";
 
 const mockDonors = [
   {
@@ -72,30 +73,62 @@ export default function FindDonorSection() {
   return (
     <section className="w-full pt-0 pb-24 bg-background overflow-hidden relative flex flex-col gap-16 items-center justify-center">
       <div className="container mx-auto px-5 max-w-2xl text-center flex flex-col items-center gap-3 z-20">
-        <span className="text-xs font-bold uppercase tracking-widest text-red-500 bg-red-500/10 px-3 py-1 rounded-full">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-xs font-bold uppercase tracking-widest text-red-500 bg-red-500/10 px-3 py-1 rounded-full"
+        >
           Live Database
-        </span>
-        <h2 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+        </motion.div>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl"
+        >
           Find Blood Donors{" "}
           <span className="text-red-600">Near You Instantly</span>
-        </h2>
-        <p className="text-muted-foreground text-sm sm:text-base max-w-lg leading-normal">
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-muted-foreground text-sm sm:text-base max-w-lg leading-normal"
+        >
           Access Bangladesh&apos;s most active network of real-time blood
           donors. Explore our active community database to find immediate
           support.
-        </p>
+        </motion.p>
 
-        <div className="mt-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-4"
+        >
           <Link href="/donors" passHrefLegacy>
             <button className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-lg active:scale-98 flex items-center justify-center gap-2 select-none group">
               Explore Active Donors
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </Link>
-        </div>
+        </motion.div>
       </div>
 
-      <div className="w-full relative flex flex-col gap-4 justify-center overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="w-full relative flex flex-col gap-4 justify-center overflow-hidden"
+      >
         <Marquee pauseOnHover className="[--duration:120s]">
           {mockDonors.map((donor, idx) => (
             <DonorCard key={`row1-${idx}`} donor={donor} />
@@ -110,7 +143,7 @@ export default function FindDonorSection() {
 
         <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background via-background/20 to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background via-background/20 to-transparent z-10" />
-      </div>
+      </motion.div>
     </section>
   );
 }
