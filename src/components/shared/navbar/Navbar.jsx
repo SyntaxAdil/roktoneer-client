@@ -206,7 +206,7 @@ const Navbar = () => {
 
                   <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
                     <Button variant="outline" className="w-full justify-start rounded-lg">
-                      <LuLayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                      <LucideLayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                     </Button>
                   </Link>
 

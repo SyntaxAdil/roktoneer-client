@@ -20,7 +20,7 @@ const Footer = () => {
 
   return (
     <footer className="w-full bg-zinc-50 dark:bg-zinc-950 border-t border-zinc-200/60 dark:border-zinc-900 transition-colors pt-16 pb-8 ">
-      <div className="container mx-auto px-5 lg:px-8 max-w-7xl">
+      <div className="container mx-auto px-5 lg:px-8 ">
         
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12">
