@@ -6,8 +6,7 @@ import { MongoClient } from "mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI);
 const db = client.db("roktoneer");
-console.log(client )
-console.log(process.env.MONGODB_URI)
+
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
@@ -32,8 +31,13 @@ export const auth = betterAuth({
   plugins: [jwt()],
   user: {
   additionalFields: {
+
+    status:{
+      type:"string",
+      default:"active"
+    },
     role: {
-      default: "donar",
+      default: "donor",
     },
     phoneNumber: {
       type: "string",

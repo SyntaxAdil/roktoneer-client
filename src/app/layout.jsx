@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-
+import { ThemeProvider } from "next-themes";
+// Font inter
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -12,7 +13,8 @@ export const metadata = {
     default: "RoktoNeer | Connecting Life, One Drop at a Time",
     template: "%s | RoktoNeer",
   },
-  description: "RoktoNeer is a modern MERN stack blood donation platform connecting voluntary blood donors with recipients instantly across Bangladesh. Save lives by donating blood today.",
+  description:
+    "RoktoNeer is a modern MERN stack blood donation platform connecting voluntary blood donors with recipients instantly across Bangladesh. Save lives by donating blood today.",
   authors: [{ name: "Abdur Rahman Adil" }],
   keywords: [
     "Blood Donation",
@@ -21,7 +23,7 @@ export const metadata = {
     "RoktoNeer",
     "Find Blood Donor Dhaka",
     "MERN Blood Donation App",
-    "Emergency Blood Request"
+    "Emergency Blood Request",
   ],
   creator: "Abdur Rahman Adil",
   publisher: "RoktoNeer",
@@ -35,13 +37,13 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${inter.variable} h-full antialiased scroll-smooth`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 selection:bg-red-500 selection:text-white">
-        <main className="grow flex flex-col">
-          {children}
-        </main>
-
-        <Toaster></Toaster>
+      <body className="min-h-full flex flex-col font-sans bg-background text-foreground selection:bg-red-500 selection:text-white">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <main className="grow flex flex-col">{children}</main>
+          <Toaster></Toaster>
+        </ThemeProvider>
       </body>
     </html>
   );

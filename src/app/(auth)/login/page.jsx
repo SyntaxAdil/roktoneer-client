@@ -14,6 +14,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { signIn } from "../../../lib/auth/auth-client";
 import toast from "react-hot-toast";
+import Logo from "../../../components/shared/Logo";
 
 const LogInPage = () => {
   const router = useRouter();
@@ -72,16 +73,8 @@ const LogInPage = () => {
       <Wrapper className="max-w-md w-full bg-card border border-border shadow-xl rounded-2xl p-6 md:p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center">
-            <div className="flex items-center justify-center w-14 h-14 mb-3 rounded-full bg-primary/10">
-              <svg
-                className="w-8 h-8 text-primary"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z" />
-              </svg>
-            </div>
+          <div className="flex justify-center items-center mb-2">
+            <Logo isVerticle ></Logo>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">
             Welcome Back

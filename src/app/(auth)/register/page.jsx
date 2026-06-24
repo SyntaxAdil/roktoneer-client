@@ -25,6 +25,8 @@ import { Checkbox } from "../../../components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { signUp } from "../../../lib/auth/auth-client";
 import toast from "react-hot-toast";
+import Image from "next/image";
+import Logo from "../../../components/shared/Logo";
 
 const bloodGroups = bloodGroupsInfo.map((i) => i.group);
 
@@ -134,20 +136,10 @@ const RegisterPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-background text-foreground p-4">
       <Wrapper className="max-w-xl w-full bg-card border border-border shadow-xl rounded-2xl p-6 md:p-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center">
-            <div className="flex items-center justify-center w-14 h-14 mb-3 rounded-full bg-primary/10">
-              <svg
-                className="w-8 h-8 text-primary"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0z" />
-              </svg>
-            </div>
+          <div className="flex justify-center items-center mb-2">
+            <Logo isVerticle ></Logo>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">
-            RoktoNeer
-          </h1>
+          
           <p className="text-muted-foreground text-sm">
             Fill in the details below to register as a donor.
           </p>
@@ -222,7 +214,9 @@ const RegisterPage = () => {
               {imagePreview ? (
                 <div className="flex items-center gap-4 w-full">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border shadow-inner shrink-0 bg-muted">
-                    <img
+                    <Image
+                    width={300}
+                    height={300}
                       src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-cover"
