@@ -21,19 +21,19 @@ import { Button } from "../../../components/ui/button";
 import Link from "next/link";
 import Wrapper from "../../../components/shared/Wrapper";
 import { Checkbox } from "../../../components/ui/checkbox";
-import toast from "react-hot-toast";
+
 import { useRouter } from "next/navigation";
-
-
-// blood groups
+import { signUp } from "../../../lib/auth/auth-client";
+import toast from "react-hot-toast";
 
 const bloodGroups = bloodGroupsInfo.map((i) => i.group);
 
-const LogInPage = () => {
+const RegisterPage = () => {
   const [districtId, setDistrictId] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const router= useRouter()
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -57,6 +57,9 @@ const LogInPage = () => {
   });
 
   const password = watch("password");
+  const selectedBloodGroup = watch("bloodGroup");
+  const selectedDistrict = watch("district");
+  const selectedUpazila = watch("upazila");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -92,30 +95,44 @@ const LogInPage = () => {
           console.error("imgBB Upload Failed:", resData);
         }
       }
-      const finalData = {
-        ...data,
-        picture: imageUrl,
-      };
 
-      toast.success("Register Successfull");
+      const { error } = await signUp.email(
+        {
+          email: data.email,
+          password: data.password,
+          name: data.fullName,
+          image: imageUrl,
+          phoneNumber: data.phoneNumber,
+          bloodGroup: data.bloodGroup,
+          district: data.district,
+          upazila: data.upazila,
+          callbackURL: "/",
+        },
+        {
+          onSuccess: () => {
+            toast.success("Register Successful");
+            reset();
+            setImagePreview(null);
+            setDistrictId("");
+            router.push("/");
+          },
+        },
+      );
 
-      console.log("Submitted Data with imgBB URL:", finalData);
+      if (error) {
+        toast.error(error.message || "Something went wrong");
+      }
     } catch (error) {
       toast.error("Register failed");
       console.error("Submission error:", error);
     } finally {
-      reset();
-      setImagePreview(null);
-      setDistrictId("");
       setIsUploading(false);
-      router.push("/")
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background text-foreground p-4">
       <Wrapper className="max-w-xl w-full bg-card border border-border shadow-xl rounded-2xl p-6 md:p-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center items-center">
             <div className="flex items-center justify-center w-14 h-14 mb-3 rounded-full bg-primary/10">
@@ -136,10 +153,8 @@ const LogInPage = () => {
           </p>
         </div>
 
-        <form  onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-          {/* first row */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Full name */}
             <Field>
               <FieldLabel
                 htmlFor="fullName"
@@ -160,7 +175,6 @@ const LogInPage = () => {
                 </FieldDescription>
               )}
             </Field>
-            {/* email*/}
             <Field>
               <FieldLabel
                 htmlFor="email"
@@ -189,7 +203,6 @@ const LogInPage = () => {
             </Field>
           </div>
 
-          {/* picture row/ */}
           <Field>
             <FieldLabel
               htmlFor="picture"
@@ -209,7 +222,6 @@ const LogInPage = () => {
               {imagePreview ? (
                 <div className="flex items-center gap-4 w-full">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border shadow-inner shrink-0 bg-muted">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={imagePreview}
                       alt="Preview"
@@ -260,14 +272,17 @@ const LogInPage = () => {
             )}
           </Field>
 
-          {/* second row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* select blood */}
             <Field>
               <FieldLabel className="text-xs font-semibold text-foreground/80 mb-1.5">
                 Blood Group
               </FieldLabel>
-              <Select onValueChange={(value) => setValue("bloodGroup", value)}>
+              <Select
+                value={selectedBloodGroup || ""}
+                onValueChange={(value) =>
+                  setValue("bloodGroup", value, { shouldValidate: true })
+                }
+              >
                 <SelectTrigger className="w-full h-10 border-input bg-background focus:border-primary rounded-lg text-left text-foreground">
                   <SelectValue placeholder="Select Group" />
                 </SelectTrigger>
@@ -294,7 +309,6 @@ const LogInPage = () => {
               )}
             </Field>
 
-            {/* Number */}
             <Field>
               <FieldLabel
                 htmlFor="phoneNumber"
@@ -319,18 +333,17 @@ const LogInPage = () => {
             </Field>
           </div>
 
-          {/* third row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* district */}
             <Field>
               <FieldLabel className="text-xs font-semibold text-foreground/80 mb-1.5">
                 District
               </FieldLabel>
               <Select
+                value={selectedDistrict || ""}
                 onValueChange={(value) => {
                   setDistrictId(value);
-                  setValue("district", value);
-                  setValue("upazila", "");
+                  setValue("district", value, { shouldValidate: true });
+                  setValue("upazila", "", { shouldValidate: false });
                 }}
               >
                 <SelectTrigger className="w-full h-10 border-input bg-background focus:border-primary rounded-lg text-left text-foreground">
@@ -357,14 +370,16 @@ const LogInPage = () => {
               )}
             </Field>
 
-            {/* Upazila/Area */}
             <Field>
               <FieldLabel className="text-xs font-semibold text-foreground/80 mb-1.5">
                 Upazila/Area
               </FieldLabel>
               <Select
                 disabled={!districtId}
-                onValueChange={(value) => setValue("upazila", value)}
+                value={selectedUpazila || ""}
+                onValueChange={(value) =>
+                  setValue("upazila", value, { shouldValidate: true })
+                }
               >
                 <SelectTrigger className="w-full h-10 border-input bg-background focus:border-primary rounded-lg text-left text-foreground">
                   <SelectValue placeholder="Enter area name" />
@@ -395,9 +410,7 @@ const LogInPage = () => {
             </Field>
           </div>
 
-          {/* fourt row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Password */}
             <Field>
               <FieldLabel
                 htmlFor="password"
@@ -413,8 +426,8 @@ const LogInPage = () => {
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
+                    value: 8,
+                    message: "Password must be at least 8 characters",
                   },
                 })}
               />
@@ -424,7 +437,6 @@ const LogInPage = () => {
                 </FieldDescription>
               )}
             </Field>
-            {/* email*/}
             <Field>
               <FieldLabel
                 htmlFor="confirmPassword"
@@ -451,7 +463,6 @@ const LogInPage = () => {
             </Field>
           </div>
 
-          {/* fifth row conditional */}
           <div className="mt-1">
             <Field
               orientation="horizontal"
@@ -460,9 +471,10 @@ const LogInPage = () => {
               <Checkbox
                 id="terms"
                 name="terms"
+                checked={!!watch("terms")}
                 className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 onCheckedChange={(checked) =>
-                  setValue("terms", checked === true)
+                  setValue("terms", checked === true, { shouldValidate: true })
                 }
               />
               <FieldLabel
@@ -493,7 +505,6 @@ const LogInPage = () => {
             )}
           </div>
 
-          {/* actions */}
           <div className="flex flex-col gap-4 mt-3 items-center">
             <Button
               type="submit"
@@ -518,4 +529,4 @@ const LogInPage = () => {
   );
 };
 
-export default LogInPage;
+export default RegisterPage;

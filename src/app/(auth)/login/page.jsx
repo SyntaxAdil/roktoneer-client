@@ -10,14 +10,17 @@ import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import Link from "next/link";
 import Wrapper from "../../../components/shared/Wrapper";
-import { FcGoogle } from "react-icons/fc"; // npm i react-icons
+import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
+import { signIn } from "../../../lib/auth/auth-client";
+import toast from "react-hot-toast";
 
 const LogInPage = () => {
-  const router=useRouter()
+  const router = useRouter();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -26,14 +29,42 @@ const LogInPage = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Login Data:", data);
-          router.push("/")
-
+  const onSubmit = async (data) => {
+    try {
+      const { error } = await signIn.email(
+        {
+          email: data.email,
+          password: data.password,
+          callbackURL: "/",
+        },
+        {
+          onSuccess: () => {
+            toast.success("Login Successful");
+            reset();
+            router.push("/");
+          },
+          
+        },
+      );
+      if (error) {
+        toast.error(error.message || "Something went wrong");
+      }
+    } catch (error) {
+      toast.error("Internal Server Error!");
+      console.log(error);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Continue with Google triggered");
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch (error) {
+      toast.error("Google sign in failed!");
+      console.log(error);
+    }
   };
 
   return (
@@ -63,7 +94,10 @@ const LogInPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* email */}
           <Field>
-            <FieldLabel htmlFor="email" className="text-xs font-semibold text-foreground/80 mb-1.5">
+            <FieldLabel
+              htmlFor="email"
+              className="text-xs font-semibold text-foreground/80 mb-1.5"
+            >
               Email Address
             </FieldLabel>
             <Input
@@ -88,7 +122,10 @@ const LogInPage = () => {
 
           {/* password */}
           <Field>
-            <FieldLabel htmlFor="password" className="text-xs font-semibold text-foreground/80 mb-1.5">
+            <FieldLabel
+              htmlFor="password"
+              className="text-xs font-semibold text-foreground/80 mb-1.5"
+            >
               Password
             </FieldLabel>
             <Input
@@ -119,14 +156,16 @@ const LogInPage = () => {
             {/* Divider */}
             <div className="flex items-center my-2 w-full">
               <div className="flex-1 border-t border-border"></div>
-              <span className="px-3 text-xs text-muted-foreground bg-card">OR</span>
+              <span className="px-3 text-xs text-muted-foreground bg-card">
+                OR
+              </span>
               <div className="flex-1 border-t border-border"></div>
             </div>
 
             {/* Google Login */}
             <Button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={handleGoogleSignIn}
               variant="outline"
               className="w-full h-11 rounded-lg border border-input bg-background hover:bg-muted text-foreground flex items-center justify-center gap-2 font-medium transition-colors"
             >
