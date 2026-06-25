@@ -64,7 +64,6 @@ const Navbar = () => {
 
   const links = [
     { label: "Home", href: "/" },
-    { label: "Find Donors", href: "/donors" },
     { label: "Donation Requests", href: "/donation-requests" },
     ...(user ? [{ label: "Funding", href: "/funding" }] : []),
   ];

@@ -3,9 +3,10 @@ import Hero from '../../components/home/Hero'
 import DonorMarquee from '../../components/home/DonarMarquee'
 import StatsSection from '../../components/home/StatsSection'
 import FeatureSection from '../../components/home/FeaturedSection'
-import FindDonorSection from '../../components/home/FindDonarSection'
+
 import BloodMatrixSection from '../../components/home/BloodMatrixSection'
 import ContactSection from '../../components/home/ContactSection'
+import FindDonorSection from '../../components/home/FindDonarSection'
 
 const HomePage = () => {
   return (
