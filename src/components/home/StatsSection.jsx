@@ -7,7 +7,7 @@ import { NumberTicker } from "../ui/number-ticker";
 const statsData = [
   { value: 45, label: "TOTAL DONORS", suffix: "+" },
   { value: 64, label: "DISTRICTS COVERED", suffix: "" },
-  { value: 1200, label: "FUNDING (BDT)", suffix: "" },
+  { value: 1200, label: "FUNDING (USD)", suffix: "" },
   { value: 100, label: "FREE FOREVER", suffix: "%" },
 ];
 

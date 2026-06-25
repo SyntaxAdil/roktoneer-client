@@ -1,0 +1,21 @@
+import DashboardSidebar from "../../../components/dashboard/DashboardSidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "../../../components/ui/sidebar";
+import { TooltipProvider } from "../../../components/ui/tooltip";
+
+export default function DashboardLayout({ children }) {
+  return (
+ <section className="flex flex-col min-h-screen">
+      <TooltipProvider>
+        <SidebarProvider>
+          <DashboardSidebar />
+          
+          <main className=" w-full">
+            {children}</main>
+        </SidebarProvider>
+      </TooltipProvider>
+    </section>
+  );
+}
