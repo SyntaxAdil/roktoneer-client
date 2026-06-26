@@ -1,27 +1,41 @@
 import FindDonorPage from "./FindDonarPage";
 
-
-async function getInitialRequests() {
+async function getInitialDonors() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/donation-requests/search?page=1&limit=6`,
-      { cache: "no-store" }
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/donors?page=1&limit=6`,
+      {
+        cache: "no-store",
+      }
     );
+
     const result = await res.json();
-    return result.success ? result : { data: [], totalPages: 1, totalItems: 0 };
+
+    return result.success
+      ? result
+      : {
+          data: [],
+          totalPages: 1,
+          totalItems: 0,
+        };
   } catch (error) {
     console.error(error);
-    return { data: [], totalPages: 1, totalItems: 0 };
+
+    return {
+      data: [],
+      totalPages: 1,
+      totalItems: 0,
+    };
   }
 }
 
 export default async function FindDonarsPage() {
-  const initialData = await getInitialRequests();
+  const initialData = await getInitialDonors();
 
   return (
     <section>
-      <FindDonorPage 
-        initialRequests={initialData.data} 
+      <FindDonorPage
+        initialRequests={initialData.data}
         initialTotalPages={initialData.totalPages}
         initialTotalItems={initialData.totalItems}
       />

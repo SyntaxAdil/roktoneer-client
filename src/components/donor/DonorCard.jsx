@@ -2,83 +2,111 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   MapPin,
   Calendar,
-  Clock,
+  Phone,
   ArrowRight,
-  HeartPulse,
-  Building2,
+  User,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function DonorCard({ donor }) {
+  const currentStatus = donor?.status?.toLowerCase() || "active";
+  const statusLabel = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+
+  const statusStyles = {
+    active: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+    inactive: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/20",
+  };
+
   return (
-    <div className="group flex items-center justify-between gap-4 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-5 rounded-3xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       
-      <div className="flex items-center gap-4 min-w-0 flex-1">
+      <div className="flex items-start gap-4 min-w-0 flex-1">
+        
+        <div className="relative shrink-0">
+          {donor?.image ? (
+            <div className="h-16 w-16 relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+              <Image
+                src={donor.image}
+                alt={donor?.name || "Donor"}
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 via-rose-500 to-pink-500 text-white shadow-lg">
+              <User className="size-7" />
+              <div className="absolute inset-0 rounded-2xl bg-white/10 backdrop-blur-[2px]" />
+            </div>
+          )}
 
-        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-md">
-          <HeartPulse className="size-6" />
-
-          <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-lg border-2 border-white dark:border-zinc-900 bg-white dark:bg-zinc-900 text-[10px] font-black text-red-600 dark:text-red-400 shadow-sm">
-            {donor.bloodGroup}
+          <div className="absolute -bottom-2 -right-2 flex h-7 min-w-7 items-center justify-center rounded-xl border-2 border-white dark:border-zinc-900 bg-white dark:bg-zinc-950 px-1.5 text-xs font-black text-red-600 dark:text-red-400 shadow-md">
+            {donor?.bloodGroup || "N/A"}
           </div>
         </div>
 
         <div className="min-w-0 flex-1">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="truncate text-base font-black tracking-tight text-zinc-900 dark:text-zinc-50">
+                  {donor?.name || "Anonymous Donor"}
+                </h3>
+                {donor?.role === "donor" && (
+                  <span className="inline-flex items-center gap-0.5 rounded bg-red-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                    Donor
+                  </span>
+                )}
+              </div>
 
-          <div className="flex items-start justify-between gap-3">
-            
-            <div className="min-w-0 flex-1">
-              <h3 className="truncate text-sm font-black text-zinc-900 dark:text-zinc-50">
-                {donor.recipientName}
-              </h3>
-
-              <div className="mt-1 flex items-center gap-1 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
-                <Building2 className="size-3 text-red-500 shrink-0" />
+              <div className="mt-1 flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                <Phone className="size-3.5 text-red-500 shrink-0" />
                 <span className="truncate">
-                  {donor.hospitalName}
+                  {donor?.phoneNumber || "No Phone Number"}
                 </span>
               </div>
             </div>
 
-           
+            <div
+              className={`inline-flex w-fit items-center gap-1 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
+                statusStyles[currentStatus] || statusStyles.active
+              }`}
+            >
+              <ShieldCheck className="size-3" />
+              {statusLabel}
+            </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-zinc-500 dark:text-zinc-400">
-            
-            <span className="flex items-center gap-1 whitespace-nowrap">
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/70 px-2.5 py-1">
               <MapPin className="size-3 text-red-500 shrink-0" />
-              {donor.recipientDistrict}
+              {donor?.upazila ? `${donor.upazila}, ${donor?.district || ""}` : donor?.district || "Unknown Location"}
             </span>
 
-            <span className="flex items-center gap-1 whitespace-nowrap">
-              <Calendar className="size-3 text-red-500 shrink-0" />
-              {donor.donationDate}
-            </span>
-
-            <span className="flex items-center gap-1 whitespace-nowrap">
-              <Clock className="size-3 text-red-500 shrink-0" />
-              {donor.donationTime}
-            </span>
+            {donor?.createdAt && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/70 px-2.5 py-1">
+                <Calendar className="size-3 text-red-500 shrink-0" />
+                Joined: {new Date(donor.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+              </span>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="shrink-0 self-center flex  items-center gap-4">
-         <div className="shrink-0 pt-0.5">
-              <span className="inline-flex items-center rounded-full bg-red-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400 whitespace-nowrap ">
-                {donor.donationStatus}
-              </span>
-            </div>
+      <div className="flex items-center justify-end sm:justify-center shrink-0">
         <Link
-          href={`/dashboard/donation-requests/${donor._id}`}
-          className="inline-flex items-center gap-1 rounded-xl border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-zinc-600 transition-all hover:border-red-500 hover:text-red-600 dark:text-zinc-300 dark:hover:text-red-400 whitespace-nowrap"
+          href={`/donors/${donor?._id || ""}`}
+          className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900 dark:bg-zinc-100 px-4 py-3 text-[11px] font-black uppercase tracking-[0.15em] text-white dark:text-zinc-900 transition-all hover:scale-[1.03] hover:bg-red-600 dark:hover:bg-red-500"
         >
-          Details
-          <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+          View Profile
+          <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
         </Link>
       </div>
+
     </div>
   );
 }
