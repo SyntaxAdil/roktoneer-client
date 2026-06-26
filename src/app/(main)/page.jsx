@@ -70,7 +70,7 @@ const HomePage = async() => {
   return (
     <section>
       <DonorMarquee requests={pendingReqEmergency}></DonorMarquee>
-      <Hero></Hero>
+      <Hero totalDonarActive={activeDonorsCount}></Hero>
       <StatsSection activeDonorsCount={activeDonorsCount} ></StatsSection>
       <FeatureSection ></FeatureSection>
       <FindDonorSection donars={donors}  ></FindDonorSection>

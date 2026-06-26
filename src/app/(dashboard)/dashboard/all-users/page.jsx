@@ -14,7 +14,7 @@ export default async function AllUsersPage({
   });
 
   if (!session?.user) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   if (session.user.role !== "admin") {

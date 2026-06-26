@@ -12,7 +12,7 @@ export default async function DonationRequestDetails({ params }) {
   });
 
   if (!session?.user) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const { token } = await auth.api.getToken({

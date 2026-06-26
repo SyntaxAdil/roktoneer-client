@@ -15,7 +15,7 @@ export default async function PublicRequestsPage({
   });
 
   if (!session?.user) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const role = session.user.role;

@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground selection:bg-red-500 selection:text-white">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <main className="grow flex flex-col">{children}</main>
           <Toaster></Toaster>
         </ThemeProvider>

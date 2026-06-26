@@ -16,7 +16,8 @@ import { Button } from "@/components/ui/button";
 import NavLink from "./NavLink";
 
 import {
-  handleSignout,
+  
+  authClient,
   useSession,
 } from "@/lib/auth/auth-client";
 
@@ -37,6 +38,7 @@ import {
 
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import Logo from "../Logo";
+import toast from "react-hot-toast";
 
 
 const Navbar = () => {
@@ -74,7 +76,11 @@ const Navbar = () => {
     ?.join("")
     ?.slice(0, 2)
     ?.toUpperCase();
-
+  const handleSignout=async()=>{
+    await authClient.signOut()
+    toast.success("Logout Successfull")
+    await refetch()
+  }
   return (
     <>
       <header
@@ -210,7 +216,7 @@ const Navbar = () => {
                     className="w-full justify-start rounded-lg"
                     onClick={() => {
                       setMenuOpen(false);
-                      handleSignout(refetch);
+                      handleSignout();
                     }}
                   >
                     <LogOut className="mr-2 h-4 w-4" /> Logout
