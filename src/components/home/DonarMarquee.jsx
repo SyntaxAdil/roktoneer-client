@@ -4,16 +4,14 @@ import { Marquee } from "../ui/marquee";
 
 
 
-const alerts = [
-  "B+ NEEDED AT DHAKA MEDICAL COLLEGE",
-  "O- NEEDED AT SYLHET MAG OSMANI",
-  "AB+ NEEDED AT CHITTAGONG GEN HOSPITAL",
-  "A+ NEEDED AT SIR SALIMULLAH MEDICAL",
-];
 
-export default function DonorMarquee() {
+export default function DonorMarquee({requests}) {
+
+  const alerts=requests.map(req=> req.bloodGroup +" "+ req.recipientUpazila + " | "+ req.recipientDistrict + " | " +req.contactNumber )
+  
   return (
-    <div className="w-full bg-red-500 dark:bg-red-800 h-9 flex items-center overflow-hidden border-b border-red-800 shadow-sm">
+   <>
+   {alerts.length>0 &&  <div className="w-full bg-red-500 dark:bg-red-800 h-9 flex items-center overflow-hidden border-b border-red-800 shadow-sm">
       <Marquee pauseOnHover className="[--duration:25s] flex items-center h-full">
         {alerts.map((text, idx) => (
           <div 
@@ -25,6 +23,6 @@ export default function DonorMarquee() {
           </div>
         ))}
       </Marquee>
-    </div>
+    </div>}</>
   );
 }

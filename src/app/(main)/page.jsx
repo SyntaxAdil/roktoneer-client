@@ -7,7 +7,7 @@ import FeatureSection from '../../components/home/FeaturedSection'
 import BloodMatrixSection from '../../components/home/BloodMatrixSection'
 import ContactSection from '../../components/home/ContactSection'
 import FindDonorSection from '../../components/home/FindDonarSection'
-async function getPendingRequests() {
+async function getDonors() {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/users/donors?page=1&limit=6`,
@@ -17,23 +17,63 @@ async function getPendingRequests() {
     );
 
     const result = await res.json();
-console.log(result)
+
     return result.success ? result.data : [];
   } catch (error) {
     console.error(error);
     return [];
   }
 }
+async function getPendingReq() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/donation-requests/public-pending?page=1&limit=6`,
+      {
+        cache: "no-store",
+      }
+    );
+    
+
+    const result = await res.json();
+
+    return result.success ? result.data : [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+async function getActiveDonarsCount() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/active-donors-count`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    const result = await res.json();
+
+    return result.success ? result.data : [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+
 const HomePage = async() => {
-  const pendingRequests=await getPendingRequests()
+  const donors=await getDonors()
+  const pendingReqEmergency=await getPendingReq()
+  const activeDonorsCount=await getActiveDonarsCount()
+  
   
   return (
     <section>
-      <DonorMarquee></DonorMarquee>
+      <DonorMarquee requests={pendingReqEmergency}></DonorMarquee>
       <Hero></Hero>
-      <StatsSection></StatsSection>
-      <FeatureSection  ></FeatureSection>
-      <FindDonorSection donars={pendingRequests}  ></FindDonorSection>
+      <StatsSection activeDonorsCount={activeDonorsCount} ></StatsSection>
+      <FeatureSection ></FeatureSection>
+      <FindDonorSection donars={donors}  ></FindDonorSection>
       <BloodMatrixSection></BloodMatrixSection>
       <ContactSection></ContactSection>
     </section>
