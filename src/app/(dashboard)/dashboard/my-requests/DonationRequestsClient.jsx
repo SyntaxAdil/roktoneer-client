@@ -34,7 +34,7 @@ import MyDonationReqCard from "../../../../components/dashboard/MyDonationReqCar
 
 import NoDonationRequest from "../../../../components/dashboard/NoDonationRequest";
 
-export default function MyRequestsClient({
+export default function DonationRequestsClient({
   initialRequests,
   total,
   currentPage,

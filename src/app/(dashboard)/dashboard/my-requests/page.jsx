@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 
 import { Loader2 } from "lucide-react";
 
-import MyRequestsClient from "./MyRequestsClient";
+import DonationRequestsClient from "./DonationRequestsClient";
 
 import DashboardHeader from "../../../../components/dashboard/DashboardHeader";
 
@@ -80,7 +80,7 @@ export default async function MyRequestsPage({
           </div>
         }
       >
-        <MyRequestsClient
+        <DonationRequestsClient
           initialRequests={data}
           total={total}
           currentPage={Number(page)}
