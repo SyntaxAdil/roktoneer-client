@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import DonationRequestClient from "../../my-requests/[id]/DonationRequestClient";
+import DashboardHeader from "../../../../../components/dashboard/DashboardHeader";
 
 
 export default async function DonationRequestDetails({ params }) {
@@ -53,6 +54,8 @@ export default async function DonationRequestDetails({ params }) {
   }
 
   return (
+    <>
+    <DashboardHeader title="Request Detailes" ></DashboardHeader>
     <Suspense
       fallback={
         <div className="w-full min-h-[400px] flex items-center justify-center">
@@ -61,6 +64,6 @@ export default async function DonationRequestDetails({ params }) {
       }
     >
       <DonationRequestClient request={requestData} />
-    </Suspense>
+    </Suspense></>
   );
 }

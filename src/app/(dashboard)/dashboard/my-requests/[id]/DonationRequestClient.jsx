@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,6 +70,8 @@ export default function DonationRequestClient({ request }) {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const recipientPhone = request?.recipientPhoneNumber || request?.contactNumber;
 
   const handleConfirmDonate = async () => {
     if (!session?.user) {
@@ -209,6 +212,24 @@ export default function DonationRequestClient({ request }) {
                   <p className="text-sm font-semibold text-foreground">{request.recipientName}</p>
                 </div>
               </div>
+              
+              <div className="flex items-start gap-3">
+                <Phone className="size-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-[11px] text-muted-foreground">Phone Number</p>
+                  {recipientPhone ? (
+                    <a 
+                      href={`tel:${recipientPhone}`} 
+                      className="text-sm font-semibold text-red-600 dark:text-red-400 hover:underline flex items-center gap-1 w-fit"
+                    >
+                      {recipientPhone}
+                    </a>
+                  ) : (
+                    <p className="text-sm font-medium text-zinc-400">Not Provided</p>
+                  )}
+                </div>
+              </div>
+
               <div className="flex items-start gap-3">
                 <Heart className="size-4 text-red-500 mt-0.5" />
                 <div>

@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
 import {
   MapPin,
   Calendar,
   Phone,
-  ArrowRight,
   User,
   ShieldCheck,
 } from "lucide-react";
@@ -23,9 +21,7 @@ export default function DonorCard({ donor }) {
 
   return (
     <div className="group flex flex-col sm:flex-row sm:items-center justify-between gap-5 rounded-3xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      
       <div className="flex items-start gap-4 min-w-0 flex-1">
-        
         <div className="relative shrink-0">
           {donor?.image ? (
             <div className="h-16 w-16 relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
@@ -97,16 +93,25 @@ export default function DonorCard({ donor }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-end sm:justify-center shrink-0">
-        <Link
-          href={`/donors/${donor?._id || ""}`}
-          className="inline-flex items-center gap-2 rounded-2xl bg-zinc-900 dark:bg-zinc-100 px-4 py-3 text-[11px] font-black uppercase tracking-[0.15em] text-white dark:text-zinc-900 transition-all hover:scale-[1.03] hover:bg-red-600 dark:hover:bg-red-500"
-        >
-          View Profile
-          <ArrowRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-        </Link>
+      <div className="flex items-center justify-stretch sm:justify-center shrink-0 w-full sm:w-auto">
+        {donor?.phoneNumber ? (
+          <a
+            href={`tel:${donor.phoneNumber}`}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-300 shadow-md shadow-red-500/10"
+          >
+            <Phone className="size-4 animate-pulse" />
+            <span>Call Now</span>
+          </a>
+        ) : (
+          <button
+            disabled
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 font-semibold text-sm px-6 py-3 rounded-xl cursor-not-allowed"
+          >
+            <Phone className="size-4" />
+            <span>Unavailable</span>
+          </button>
+        )}
       </div>
-
     </div>
   );
 }

@@ -3,6 +3,7 @@ import DonationRequestClient from "./DonationRequestClient";
 import { notFound } from "next/navigation";
 import { auth } from "../../../../../lib/auth/auth";
 import { headers } from "next/headers";
+import DashboardHeader from "../../../../../components/dashboard/DashboardHeader";
 
 export default async function DonationRequestPage({ params }) {
   const { id } = await params;
@@ -35,5 +36,7 @@ export default async function DonationRequestPage({ params }) {
     notFound();
   }
 
-  return <DonationRequestClient request={requestData} />;
+  return <>
+  <DashboardHeader title="Request Detailes" ></DashboardHeader>
+  <DonationRequestClient request={requestData} /></>;
 }

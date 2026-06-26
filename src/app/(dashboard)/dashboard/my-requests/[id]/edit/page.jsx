@@ -2,6 +2,7 @@ import React from "react";
 import { cookies, headers } from "next/headers";
 import EditDonationRequestClient from "./EditDonationRequestClient";
 import { auth } from "../../../../../../lib/auth/auth";
+import DashboardHeader from "../../../../../../components/dashboard/DashboardHeader";
 
 async function getRequestDetails(id) {
   const { token } = await auth.api.getToken({
@@ -37,5 +38,7 @@ export default async function EditRequestPage({ params }) {
     );
   }
 
-  return <EditDonationRequestClient initialData={requestData} id={id} />;
+  return <>
+  <DashboardHeader title="Edit Request" ></DashboardHeader>
+  <EditDonationRequestClient initialData={requestData} id={id} /></>;
 }
