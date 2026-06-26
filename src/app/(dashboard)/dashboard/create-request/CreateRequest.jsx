@@ -1,18 +1,10 @@
 "use client";
 
 import React, { useMemo, useTransition } from "react";
-
 import { useForm } from "react-hook-form";
-
 import { useRouter } from "next/navigation";
-
-import {
-  useSession,
-  authClient,
-} from "@/lib/auth/auth-client";
-
+import { useSession, authClient } from "@/lib/auth/auth-client";
 import { motion } from "motion/react";
-
 import {
   Loader2,
   PlusCircle,
@@ -24,16 +16,14 @@ import {
   Calendar,
   Clock,
   MessageSquare,
+  Phone,
 } from "lucide-react";
-
 import toast from "react-hot-toast";
-
 import {
   bdDistricts,
   bdUpazilas,
   bloodGroupsInfo,
 } from "@/assets/staticDatas";
-
 import {
   Select,
   SelectContent,
@@ -43,18 +33,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const bloodGroups = bloodGroupsInfo.map(
-  (i) => i.group,
-);
+const bloodGroups = bloodGroupsInfo.map((i) => i.group);
 
 export default function CreateRequestPage() {
-  const { data: session } =
-    useSession();
-
+  const { data: session } = useSession();
   const router = useRouter();
-
-  const [isPending, startTransition] =
-    useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const {
     register,
@@ -64,151 +48,94 @@ export default function CreateRequestPage() {
     watch,
   } = useForm({
     defaultValues: {
-      requesterName:
-        session?.user?.name || "",
-
-      requesterEmail:
-        session?.user?.email || "",
-
+      requesterName: session?.user?.name || "",
+      requesterEmail: session?.user?.email || "",
       bloodGroup: "",
       recipientDistrict: "",
       recipientUpazila: "",
+      contactNumber: "",
     },
   });
 
-  const selectedDistrict = watch(
-    "recipientDistrict",
-  );
+  const selectedDistrict = watch("recipientDistrict");
+  const selectedUpazila = watch("recipientUpazila");
+  const selectedBloodGroup = watch("bloodGroup");
 
-  const selectedUpazila = watch(
-    "recipientUpazila",
-  );
-
-  const selectedBloodGroup = watch(
-    "bloodGroup",
-  );
-
-  const filteredUpazilas =
-    useMemo(() => {
-      return bdUpazilas.filter(
-        (u) =>
-          u.district_id ===
-          String(selectedDistrict),
-      );
-    }, [selectedDistrict]);
+  const filteredUpazilas = useMemo(() => {
+    return bdUpazilas.filter(
+      (u) => u.district_id === String(selectedDistrict),
+    );
+  }, [selectedDistrict]);
 
   const onSubmit = async (data) => {
     try {
-      const districtData =
-        bdDistricts.find(
-          (d) =>
-            d.id ===
-            data.recipientDistrict,
-        );
-
-      const upazilaData =
-        bdUpazilas.find(
-          (u) =>
-            u.id ===
-            data.recipientUpazila,
-        );
+      const districtData = bdDistricts.find(
+        (d) => d.id === data.recipientDistrict,
+      );
+      const upazilaData = bdUpazilas.find(
+        (u) => u.id === data.recipientUpazila,
+      );
 
       const payload = {
         ...data,
-
-        recipientDistrict:
-          districtData?.name || "",
-
-        recipientUpazila:
-          upazilaData?.name || "",
+        recipientDistrict: districtData?.name || "",
+        recipientUpazila: upazilaData?.name || "",
       };
 
-      const { data: tokenData } =
-        await authClient.token();
+      const { data: tokenData } = await authClient.token();
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/donation-request`,
         {
           method: "POST",
-
           headers: {
-            "Content-Type":
-              "application/json",
-
+            "Content-Type": "application/json",
             authorization: `Bearer ${tokenData?.token}`,
           },
-
-          body: JSON.stringify(
-            payload,
-          ),
+          body: JSON.stringify(payload),
         },
       );
 
       const result = await res.json();
 
       if (result.success) {
-        toast.success(
-          "Donation request created successfully",
-        );
-
+        toast.success("Donation request created successfully");
         startTransition(() => {
-          router.push(
-            "/dashboard/my-requests",
-          );
+          router.push("/dashboard/my-requests");
         });
       } else {
-        toast.error(
-          result.message ||
-            "Failed to create request",
-        );
+        toast.error(result.message || "Failed to create request");
       }
     } catch {
-      toast.error(
-        "Something went wrong. Please try again.",
-      );
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8 select-none">
       <motion.div
-        initial={{
-          opacity: 0,
-          y: 15,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 rounded-3xl p-6 md:p-8 shadow-sm"
       >
         <div className="mb-8">
           <h1 className="text-xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">
             Create Blood Request
           </h1>
-
           <p className="text-xs text-muted-foreground mt-1">
-            Fill out the form below to
-            post a new blood requirements
-            board listing.
+            Fill out the form below to post a new blood requirements board listing.
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
                 <User className="size-3.5" />
                 Requester Name
               </label>
-
               <input
-                {...register(
-                  "requesterName",
-                )}
+                {...register("requesterName")}
                 disabled
                 type="text"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-100/60 dark:bg-zinc-900/40 border border-zinc-200/40 dark:border-zinc-800/40 text-muted-foreground cursor-not-allowed"
@@ -220,11 +147,8 @@ export default function CreateRequestPage() {
                 <Mail className="size-3.5" />
                 Requester Email
               </label>
-
               <input
-                {...register(
-                  "requesterEmail",
-                )}
+                {...register("requesterEmail")}
                 disabled
                 type="email"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-100/60 dark:bg-zinc-900/40 border border-zinc-200/40 dark:border-zinc-800/40 text-muted-foreground cursor-not-allowed"
@@ -236,21 +160,14 @@ export default function CreateRequestPage() {
                 <User className="size-3.5" />
                 Recipient Name
               </label>
-
               <input
-                {...register(
-                  "recipientName",
-                  {
-                    required: true,
-                  },
-                )}
+                {...register("recipientName", { required: "Recipient name is required" })}
                 type="text"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
               />
-
               {errors.recipientName && (
                 <span className="text-[10px] font-bold text-red-500 block">
-                  Required Field
+                  {errors.recipientName.message}
                 </span>
               )}
             </div>
@@ -260,54 +177,32 @@ export default function CreateRequestPage() {
                 <Heart className="size-3.5" />
                 Blood Group
               </label>
-
               <Select
-                value={
-                  selectedBloodGroup || ""
-                }
+                value={selectedBloodGroup || ""}
                 onValueChange={(value) =>
-                  setValue(
-                    "bloodGroup",
-                    value,
-                    {
-                      shouldValidate: true,
-                    },
-                  )
+                  setValue("bloodGroup", value, { shouldValidate: true })
                 }
               >
                 <SelectTrigger className="w-full h-11 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60">
                   <SelectValue placeholder="Select Blood Group" />
                 </SelectTrigger>
-
                 <SelectContent>
                   <SelectGroup>
-                    {bloodGroups.map(
-                      (group) => (
-                        <SelectItem
-                          key={group}
-                          value={group}
-                        >
-                          {group}
-                        </SelectItem>
-                      ),
-                    )}
+                    {bloodGroups.map((group) => (
+                      <SelectItem key={group} value={group}>
+                        {group}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
-
               <input
                 type="hidden"
-                {...register(
-                  "bloodGroup",
-                  {
-                    required: true,
-                  },
-                )}
+                {...register("bloodGroup", { required: "Blood group is required" })}
               />
-
               {errors.bloodGroup && (
                 <span className="text-[10px] font-bold text-red-500 block">
-                  Required Field
+                  {errors.bloodGroup.message}
                 </span>
               )}
             </div>
@@ -317,63 +212,33 @@ export default function CreateRequestPage() {
                 <MapPin className="size-3.5" />
                 Recipient District
               </label>
-
               <Select
-                value={
-                  selectedDistrict || ""
-                }
+                value={selectedDistrict || ""}
                 onValueChange={(value) => {
-                  setValue(
-                    "recipientDistrict",
-                    value,
-                    {
-                      shouldValidate: true,
-                    },
-                  );
-
-                  setValue(
-                    "recipientUpazila",
-                    "",
-                  );
+                  setValue("recipientDistrict", value, { shouldValidate: true });
+                  setValue("recipientUpazila", "");
                 }}
               >
                 <SelectTrigger className="w-full h-11 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60">
                   <SelectValue placeholder="Select District" />
                 </SelectTrigger>
-
                 <SelectContent>
                   <SelectGroup>
-                    {bdDistricts.map(
-                      (district) => (
-                        <SelectItem
-                          key={
-                            district.id
-                          }
-                          value={
-                            district.id
-                          }
-                        >
-                          {district.name}
-                        </SelectItem>
-                      ),
-                    )}
+                    {bdDistricts.map((district) => (
+                      <SelectItem key={district.id} value={district.id}>
+                        {district.name}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
-
               <input
                 type="hidden"
-                {...register(
-                  "recipientDistrict",
-                  {
-                    required: true,
-                  },
-                )}
+                {...register("recipientDistrict", { required: "District is required" })}
               />
-
               {errors.recipientDistrict && (
                 <span className="text-[10px] font-bold text-red-500 block">
-                  Required Field
+                  {errors.recipientDistrict.message}
                 </span>
               )}
             </div>
@@ -383,61 +248,33 @@ export default function CreateRequestPage() {
                 <Building className="size-3.5" />
                 Recipient Upazila
               </label>
-
               <Select
-                disabled={
-                  !selectedDistrict
-                }
-                value={
-                  selectedUpazila || ""
-                }
+                disabled={!selectedDistrict}
+                value={selectedUpazila || ""}
                 onValueChange={(value) =>
-                  setValue(
-                    "recipientUpazila",
-                    value,
-                    {
-                      shouldValidate: true,
-                    },
-                  )
+                  setValue("recipientUpazila", value, { shouldValidate: true })
                 }
               >
                 <SelectTrigger className="w-full h-11 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60">
                   <SelectValue placeholder="Select Upazila" />
                 </SelectTrigger>
-
                 <SelectContent>
                   <SelectGroup>
-                    {filteredUpazilas.map(
-                      (upazila) => (
-                        <SelectItem
-                          key={
-                            upazila.id
-                          }
-                          value={
-                            upazila.id
-                          }
-                        >
-                          {upazila.name}
-                        </SelectItem>
-                      ),
-                    )}
+                    {filteredUpazilas.map((upazila) => (
+                      <SelectItem key={upazila.id} value={upazila.id}>
+                        {upazila.name}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
-
               <input
                 type="hidden"
-                {...register(
-                  "recipientUpazila",
-                  {
-                    required: true,
-                  },
-                )}
+                {...register("recipientUpazila", { required: "Upazila is required" })}
               />
-
               {errors.recipientUpazila && (
                 <span className="text-[10px] font-bold text-red-500 block">
-                  Required Field
+                  {errors.recipientUpazila.message}
                 </span>
               )}
             </div>
@@ -447,21 +284,14 @@ export default function CreateRequestPage() {
                 <Calendar className="size-3.5" />
                 Donation Date
               </label>
-
               <input
-                {...register(
-                  "donationDate",
-                  {
-                    required: true,
-                  },
-                )}
+                {...register("donationDate", { required: "Donation date is required" })}
                 type="date"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all cursor-pointer"
               />
-
               {errors.donationDate && (
                 <span className="text-[10px] font-bold text-red-500 block">
-                  Required Field
+                  {errors.donationDate.message}
                 </span>
               )}
             </div>
@@ -471,21 +301,14 @@ export default function CreateRequestPage() {
                 <Clock className="size-3.5" />
                 Donation Time
               </label>
-
               <input
-                {...register(
-                  "donationTime",
-                  {
-                    required: true,
-                  },
-                )}
+                {...register("donationTime", { required: "Donation time is required" })}
                 type="time"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all cursor-pointer"
               />
-
               {errors.donationTime && (
                 <span className="text-[10px] font-bold text-red-500 block">
-                  Required Field
+                  {errors.donationTime.message}
                 </span>
               )}
             </div>
@@ -493,24 +316,41 @@ export default function CreateRequestPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Phone className="size-3.5" />
+              Contact Number
+            </label>
+            <input
+              {...register("contactNumber", {
+                required: "Contact number is required",
+                pattern: {
+                  value: /^(?:\+88|88)?(01[3-9]\d{8})$/,
+                  message: "Please enter a valid Bangladeshi phone number",
+                },
+              })}
+              type="tel"
+              placeholder="e.g. 017XXXXXXXX"
+              className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
+            />
+            {errors.contactNumber && (
+              <span className="text-[10px] font-bold text-red-500 block">
+                {errors.contactNumber.message}
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
               <Building className="size-3.5" />
               Hospital Name
             </label>
-
             <input
-              {...register(
-                "hospitalName",
-                {
-                  required: true,
-                },
-              )}
+              {...register("hospitalName", { required: "Hospital name is required" })}
               type="text"
               className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
             />
-
             {errors.hospitalName && (
               <span className="text-[10px] font-bold text-red-500 block">
-                Required Field
+                {errors.hospitalName.message}
               </span>
             )}
           </div>
@@ -520,22 +360,15 @@ export default function CreateRequestPage() {
               <MapPin className="size-3.5" />
               Full Address
             </label>
-
             <input
-              {...register(
-                "fullAddress",
-                {
-                  required: true,
-                },
-              )}
+              {...register("fullAddress", { required: "Full address is required" })}
               type="text"
               placeholder="e.g. Ward 4, House 12, Mirpur 10"
               className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
             />
-
             {errors.fullAddress && (
               <span className="text-[10px] font-bold text-red-500 block">
-                Required Field
+                {errors.fullAddress.message}
               </span>
             )}
           </div>
@@ -545,22 +378,15 @@ export default function CreateRequestPage() {
               <MessageSquare className="size-3.5" />
               Request Message
             </label>
-
             <textarea
-              {...register(
-                "requestMessage",
-                {
-                  required: true,
-                },
-              )}
+              {...register("requestMessage", { required: "Request message is required" })}
               rows={4}
               placeholder="State why blood is needed or any specific instructions..."
               className="w-full p-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all resize-none"
             />
-
             {errors.requestMessage && (
               <span className="text-[10px] font-bold text-red-500 block">
-                Required Field
+                {errors.requestMessage.message}
               </span>
             )}
           </div>
