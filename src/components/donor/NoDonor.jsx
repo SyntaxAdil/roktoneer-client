@@ -1,39 +1,34 @@
 "use client";
 
 import React from "react";
-import { SearchX, Sparkles } from "lucide-react";
+import { SearchX, HeartPulse } from "lucide-react";
 
-export default function NoDonor({ targetedGroup, onExpand }) {
+export default function NoDonor({ isInitial = false }) {
   return (
-    <div className="w-full flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/10">
-      {/* Icon */}
-      <div className="relative mb-4">
-        <div className="p-4 bg-zinc-100 dark:bg-zinc-900 rounded-2xl text-zinc-400 dark:text-zinc-500 border border-zinc-200/40 dark:border-zinc-800">
-          <SearchX className="size-8 stroke-[1.5]" />
+    <div className="w-full flex flex-col items-center justify-center text-center p-10 sm:p-14 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+      <div className="relative mb-5">
+        <div className="size-20 rounded-3xl bg-red-500/10 flex items-center justify-center border border-red-500/10">
+          {isInitial ? (
+            <HeartPulse className="size-10 text-red-500" />
+          ) : (
+            <SearchX className="size-10 text-zinc-400" />
+          )}
         </div>
-        <Sparkles className="size-4 text-red-500 absolute -top-1 -right-1 animate-pulse" />
       </div>
-      
-      {/* Text */}
-      <div className="flex flex-col gap-1 max-w-sm">
-        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-          No Results Found for {targetedGroup || "Selected Group"}
+
+      <div className="max-w-md space-y-2">
+        <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-50">
+          {isInitial
+            ? "Search Blood Donors"
+            : "No Donors Found"}
         </h3>
-        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-          We couldn&apos;t find any active donors matching this criteria in your current area range. Try expanding your parameters.
+
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {isInitial
+            ? "Select blood group and location filters to find available blood donors near your area."
+            : "We could not find any matching donors based on your current search filters."}
         </p>
       </div>
-
-      {/* Button */}
-      {onExpand && (
-        <button
-          onClick={onExpand}
-          type="button"
-          className="mt-5 inline-flex items-center justify-center text-xs font-bold text-red-600 dark:text-red-400 hover:text-red-700 underline underline-offset-4 active:scale-98 transition-transform"
-        >
-          Expand Search Area
-        </button>
-      )}
     </div>
   );
 }
