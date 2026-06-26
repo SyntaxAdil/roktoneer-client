@@ -137,7 +137,7 @@ export default function EditDonationRequestClient({
         );
 
         router.push(
-          "/dashboard/donation-requests",
+          "/dashboard/my-requests",
         );
 
         router.refresh();

@@ -7,6 +7,7 @@ async function getRequestDetails(id) {
   const { token } = await auth.api.getToken({
     headers: await headers(),
   });
+  
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/donation-requests/${id}`,
     {
