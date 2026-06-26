@@ -294,7 +294,7 @@ export default function DonationRequestsClient({
           </AlertDialogHeader>
 
           <AlertDialogFooter className="gap-2 sm:gap-0">
-            <AlertDialogCancel className="rounded-xl">
+            <AlertDialogCancel className="rounded-xl mr-2">
               Cancel
             </AlertDialogCancel>
 

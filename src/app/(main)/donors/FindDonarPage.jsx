@@ -3,11 +3,14 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "motion/react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 import {
   Search,
-  AlertTriangle,
   Loader2,
   MapPin,
+  Download,
 } from "lucide-react";
 
 import {
@@ -124,6 +127,53 @@ export default function FindDonorPage({
     if (newPage >= 1 && newPage <= totalPages) {
       fetchData(newPage);
     }
+  };
+
+  const handleDownloadPdf = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(20);
+    doc.text("Blood Donor Report", 14, 20);
+
+    doc.setFontSize(10);
+
+    doc.text(
+      `Generated: ${new Date().toLocaleString()}`,
+      14,
+      28
+    );
+
+    autoTable(doc, {
+      startY: 36,
+      head: [
+        [
+          "#",
+          "Name",
+          "Blood",
+          "District",
+          "Upazila",
+          "Status",
+          "Contact"
+        ],
+      ],
+      body: requests.map((donor, index) => [
+        index + 1,
+        donor.name || donor.recipientName || "N/A",
+        donor.bloodGroup || "N/A",
+        donor.district || "N/A",
+        donor.upazila || "N/A",
+        donor.status || "active",
+        donor.phoneNumber
+      ]),
+      styles: {
+        fontSize: 9,
+      },
+      headStyles: {
+        fillColor: [220, 38, 38],
+      },
+    });
+
+    doc.save("blood-donors.pdf");
   };
 
   return (
@@ -324,9 +374,21 @@ export default function FindDonorPage({
                   Available Donors
                 </h3>
 
-                <span className="text-xs font-bold text-zinc-500 bg-zinc-200/50 dark:bg-zinc-800 px-2 py-1 rounded-md">
-                  {totalItems} Found
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-zinc-500 bg-zinc-200/50 dark:bg-zinc-800 px-2 py-1 rounded-md">
+                    {totalItems} Found
+                  </span>
+
+                  {requests.length > 0 && (
+                    <button
+                      onClick={handleDownloadPdf}
+                      className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+                    >
+                      <Download className="size-3.5" />
+                      PDF
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
