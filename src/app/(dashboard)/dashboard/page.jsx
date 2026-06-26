@@ -1,8 +1,12 @@
 import React from 'react'
+import { SidebarTrigger } from '../../../components/ui/sidebar'
+import DashboardHeader from '../../../components/dashboard/DashboardHeader'
 
 const DashboardPage = () => {
   return (
-    <div>DashboardPage</div>
+    <div>
+       <DashboardHeader ></DashboardHeader>
+        DashboardPage</div>
   )
 }
 

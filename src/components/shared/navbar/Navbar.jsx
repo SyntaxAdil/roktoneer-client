@@ -130,13 +130,7 @@ const Navbar = () => {
                       <LucideLayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                     </DropdownMenuItem>
                   </Link>
-                  {user?.role === "admin" && (
-                    <Link href="/dashboard">
-                      <DropdownMenuItem className="cursor-pointer">
-                        <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
-                      </DropdownMenuItem>
-                    </Link>
-                  )}
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => handleSignout(refetch)}
@@ -209,13 +203,7 @@ const Navbar = () => {
                     </Button>
                   </Link>
 
-                  {user?.role === "admin" && (
-                    <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
-                      <Button variant="outline" className="w-full justify-start rounded-lg">
-                        <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
-                      </Button>
-                    </Link>
-                  )}
+                  
 
                   <Button
                     variant="destructive"

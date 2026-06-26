@@ -34,10 +34,13 @@ export const auth = betterAuth({
 
     status:{
       type:"string",
-      default:"active"
+      
+      defaultValue:"active"
     },
     role: {
-      default: "donor",
+    type: "string",
+      required: false, 
+      defaultValue: "donor",
     },
     phoneNumber: {
       type: "string",

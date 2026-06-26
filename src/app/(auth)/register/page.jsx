@@ -11,7 +11,7 @@ import {
 import { Input } from "../../../components/ui/input";
 import {
   Select,
-  SelectContent,
+ SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
@@ -91,12 +91,21 @@ const RegisterPage = () => {
         );
 
         const resData = await response.json();
+
         if (resData.success) {
           imageUrl = resData.data.url;
         } else {
           console.error("imgBB Upload Failed:", resData);
         }
       }
+
+      const selectedDistrictData = bdDistricts.find(
+        (d) => d.id === data.district,
+      );
+
+      const selectedUpazilaData = bdUpazilas.find(
+        (u) => u.id === data.upazila,
+      );
 
       const { error } = await signUp.email(
         {
@@ -106,8 +115,8 @@ const RegisterPage = () => {
           image: imageUrl,
           phoneNumber: data.phoneNumber,
           bloodGroup: data.bloodGroup,
-          district: data.district,
-          upazila: data.upazila,
+          district: selectedDistrictData?.name || "",
+          upazila: selectedUpazilaData?.name || "",
           callbackURL: "/",
         },
         {
@@ -137,9 +146,9 @@ const RegisterPage = () => {
       <Wrapper className="max-w-xl w-full bg-card border border-border shadow-xl rounded-2xl p-6 md:p-8">
         <div className="text-center mb-8">
           <div className="flex justify-center items-center mb-2">
-            <Logo isVerticle ></Logo>
+            <Logo isVerticle></Logo>
           </div>
-          
+
           <p className="text-muted-foreground text-sm">
             Fill in the details below to register as a donor.
           </p>
@@ -154,19 +163,24 @@ const RegisterPage = () => {
               >
                 Full Name
               </FieldLabel>
+
               <Input
                 id="fullName"
                 type="text"
                 placeholder="Adil"
                 className="w-full h-10 border-input bg-background focus:border-primary focus:ring-ring/20 rounded-lg transition-colors placeholder:text-muted-foreground/50"
-                {...register("fullName", { required: "Full name is required" })}
+                {...register("fullName", {
+                  required: "Full name is required",
+                })}
               />
+
               {errors.fullName && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.fullName.message}
                 </FieldDescription>
               )}
             </Field>
+
             <Field>
               <FieldLabel
                 htmlFor="email"
@@ -174,6 +188,7 @@ const RegisterPage = () => {
               >
                 Email Address
               </FieldLabel>
+
               <Input
                 id="email"
                 type="email"
@@ -182,11 +197,13 @@ const RegisterPage = () => {
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    value:
+                      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: "Invalid email address",
                   },
                 })}
               />
+
               {errors.email && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.email.message}
@@ -202,6 +219,7 @@ const RegisterPage = () => {
             >
               Profile Picture
             </FieldLabel>
+
             <div className="flex flex-col items-center justify-center border-2 border-dashed border-input rounded-xl p-4 bg-background hover:bg-muted/30 transition-all group relative cursor-pointer min-h-[110px]">
               <input
                 id="picture"
@@ -215,17 +233,19 @@ const RegisterPage = () => {
                 <div className="flex items-center gap-4 w-full">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border shadow-inner shrink-0 bg-muted">
                     <Image
-                    width={300}
-                    height={300}
+                      width={300}
+                      height={300}
                       src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-cover"
                     />
                   </div>
+
                   <div className="text-left">
                     <p className="text-xs font-medium text-foreground">
                       Image Selected
                     </p>
+
                     <p className="text-[11px] text-muted-foreground">
                       Click or drag to replace
                     </p>
@@ -246,19 +266,24 @@ const RegisterPage = () => {
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
+
                   <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
                     Drag and drop or{" "}
-                    <span className="text-primary font-semibold">browse</span>
+                    <span className="text-primary font-semibold">
+                      browse
+                    </span>
                   </p>
                 </div>
               )}
             </div>
+
             <input
               type="hidden"
               {...register("picture", {
                 required: "Profile picture is required",
               })}
             />
+
             {errors.picture && (
               <FieldDescription className="text-destructive text-xs mt-1">
                 {errors.picture.message}
@@ -271,15 +296,19 @@ const RegisterPage = () => {
               <FieldLabel className="text-xs font-semibold text-foreground/80 mb-1.5">
                 Blood Group
               </FieldLabel>
+
               <Select
                 value={selectedBloodGroup || ""}
                 onValueChange={(value) =>
-                  setValue("bloodGroup", value, { shouldValidate: true })
+                  setValue("bloodGroup", value, {
+                    shouldValidate: true,
+                  })
                 }
               >
                 <SelectTrigger className="w-full h-10 border-input bg-background focus:border-primary rounded-lg text-left text-foreground">
                   <SelectValue placeholder="Select Group" />
                 </SelectTrigger>
+
                 <SelectContent className="bg-popover border-border text-popover-foreground">
                   <SelectGroup>
                     {bloodGroups.map((group, idx) => (
@@ -290,12 +319,14 @@ const RegisterPage = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+
               <input
                 type="hidden"
                 {...register("bloodGroup", {
                   required: "Blood group is required",
                 })}
               />
+
               {errors.bloodGroup && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.bloodGroup.message}
@@ -310,6 +341,7 @@ const RegisterPage = () => {
               >
                 Phone Number
               </FieldLabel>
+
               <Input
                 id="phoneNumber"
                 type="tel"
@@ -319,6 +351,7 @@ const RegisterPage = () => {
                   required: "Phone number is required",
                 })}
               />
+
               {errors.phoneNumber && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.phoneNumber.message}
@@ -332,17 +365,25 @@ const RegisterPage = () => {
               <FieldLabel className="text-xs font-semibold text-foreground/80 mb-1.5">
                 District
               </FieldLabel>
+
               <Select
                 value={selectedDistrict || ""}
                 onValueChange={(value) => {
                   setDistrictId(value);
-                  setValue("district", value, { shouldValidate: true });
-                  setValue("upazila", "", { shouldValidate: false });
+
+                  setValue("district", value, {
+                    shouldValidate: true,
+                  });
+
+                  setValue("upazila", "", {
+                    shouldValidate: false,
+                  });
                 }}
               >
                 <SelectTrigger className="w-full h-10 border-input bg-background focus:border-primary rounded-lg text-left text-foreground">
                   <SelectValue placeholder="Select District" />
                 </SelectTrigger>
+
                 <SelectContent className="bg-popover border-border text-popover-foreground">
                   <SelectGroup>
                     {bdDistricts.map((d) => (
@@ -353,10 +394,14 @@ const RegisterPage = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+
               <input
                 type="hidden"
-                {...register("district", { required: "District is required" })}
+                {...register("district", {
+                  required: "District is required",
+                })}
               />
+
               {errors.district && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.district.message}
@@ -368,20 +413,27 @@ const RegisterPage = () => {
               <FieldLabel className="text-xs font-semibold text-foreground/80 mb-1.5">
                 Upazila/Area
               </FieldLabel>
+
               <Select
                 disabled={!districtId}
                 value={selectedUpazila || ""}
                 onValueChange={(value) =>
-                  setValue("upazila", value, { shouldValidate: true })
+                  setValue("upazila", value, {
+                    shouldValidate: true,
+                  })
                 }
               >
                 <SelectTrigger className="w-full h-10 border-input bg-background focus:border-primary rounded-lg text-left text-foreground">
                   <SelectValue placeholder="Enter area name" />
                 </SelectTrigger>
+
                 <SelectContent className="bg-popover border-border text-popover-foreground">
                   <SelectGroup>
                     {bdUpazilas
-                      .filter((u) => u.district_id === String(districtId))
+                      .filter(
+                        (u) =>
+                          u.district_id === String(districtId),
+                      )
                       .map((u) => (
                         <SelectItem key={u.id} value={u.id}>
                           {u.name}
@@ -390,12 +442,14 @@ const RegisterPage = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+
               <input
                 type="hidden"
                 {...register("upazila", {
                   required: "Upazila/Area is required",
                 })}
               />
+
               {errors.upazila && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.upazila.message}
@@ -412,6 +466,7 @@ const RegisterPage = () => {
               >
                 Password
               </FieldLabel>
+
               <Input
                 id="password"
                 type="password"
@@ -421,16 +476,19 @@ const RegisterPage = () => {
                   required: "Password is required",
                   minLength: {
                     value: 8,
-                    message: "Password must be at least 8 characters",
+                    message:
+                      "Password must be at least 8 characters",
                   },
                 })}
               />
+
               {errors.password && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.password.message}
                 </FieldDescription>
               )}
             </Field>
+
             <Field>
               <FieldLabel
                 htmlFor="confirmPassword"
@@ -438,6 +496,7 @@ const RegisterPage = () => {
               >
                 Confirm Password
               </FieldLabel>
+
               <Input
                 id="confirmPassword"
                 type="password"
@@ -446,9 +505,11 @@ const RegisterPage = () => {
                 {...register("confirmPassword", {
                   required: "Confirm password is required",
                   validate: (value) =>
-                    value === password || "Passwords do not match",
+                    value === password ||
+                    "Passwords do not match",
                 })}
               />
+
               {errors.confirmPassword && (
                 <FieldDescription className="text-destructive text-xs mt-1">
                   {errors.confirmPassword.message}
@@ -468,9 +529,12 @@ const RegisterPage = () => {
                 checked={!!watch("terms")}
                 className="mt-0.5 border-input data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 onCheckedChange={(checked) =>
-                  setValue("terms", checked === true, { shouldValidate: true })
+                  setValue("terms", checked === true, {
+                    shouldValidate: true,
+                  })
                 }
               />
+
               <FieldLabel
                 htmlFor="terms"
                 className="text-xs text-muted-foreground cursor-pointer select-none leading-normal"
@@ -486,12 +550,14 @@ const RegisterPage = () => {
                 .
               </FieldLabel>
             </Field>
+
             <input
               type="hidden"
               {...register("terms", {
                 required: "You must agree to the terms",
               })}
             />
+
             {errors.terms && (
               <FieldDescription className="text-destructive text-xs mt-1 block">
                 {errors.terms.message}
@@ -505,10 +571,14 @@ const RegisterPage = () => {
               disabled={isUploading}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-11 rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50"
             >
-              {isUploading ? "Uploading & Processing..." : "Create Account"}
+              {isUploading
+                ? "Uploading & Processing..."
+                : "Create Account"}
             </Button>
+
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <p>Already have an account? </p>
+
               <Link
                 href={"/login"}
                 className="text-primary font-semibold hover:underline"

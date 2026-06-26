@@ -90,7 +90,7 @@ export default function DashboardSidebar() {
         {!isCollapsed ? (
           <>
             <div className="flex items-center shrink-0">
-              <Logo />
+              <Link href={"/"}><Logo /></Link>
             </div>
             <div className="flex items-center justify-center size-8 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/40 dark:border-zinc-800/40 shadow-sm shrink-0">
               <AnimatedThemeToggler fromCenter />
