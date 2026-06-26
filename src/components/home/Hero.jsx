@@ -61,7 +61,7 @@ export default function Hero({ totalDonarActive }) {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
             </span>
-            {totalDonarActive} Verified Donors Active Now
+            {totalDonarActive}+ Verified Donors Active Now
           </motion.div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-foreground leading-[1.15] min-h-[150px] sm:min-h-[auto]">
@@ -111,9 +111,8 @@ export default function Hero({ totalDonarActive }) {
             ) : (
             <Link href="/donation-requests" className="w-full sm:w-auto">
   <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-foreground font-semibold text-sm px-7 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all duration-300 active:scale-95 shadow-sm">
-    {/* আইকন পরিবর্তন করে রিকোয়েস্টের সাথে মানানসই করা হলো */}
     <HiOutlineHand className="text-lg text-red-500" />
-    {/* বানান ঠিক করা হলো: Requestes -> Requests */}
+
     Donation Requests
   </button>
 </Link>

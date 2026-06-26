@@ -10,6 +10,7 @@ import {
 
 import RecentRequestsTable from "./RecentRequestsTable";
 import AnalyticsChart from "./AnalyticsChart";
+import DonationChart from "./DonationChart";
 
 export default function AdminDashboard({
   requests,
@@ -101,6 +102,7 @@ export default function AdminDashboard({
 
         <AnalyticsChart stats={stats} />
       </div>
+      <DonationChart></DonationChart>
     </div>
   );
 }
