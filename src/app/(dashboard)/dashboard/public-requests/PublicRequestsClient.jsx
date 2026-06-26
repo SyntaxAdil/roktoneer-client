@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useTransition, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Eye,
@@ -37,6 +37,19 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+// Shadcn AlertDialog imports
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import NoDonationRequest from "@/components/dashboard/NoDonationRequest";
 import toast from "react-hot-toast";
@@ -68,6 +81,7 @@ export default function PublicRequestsClient({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -136,9 +150,7 @@ export default function PublicRequestsClient({
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = confirm("Are you sure?");
-    if (!confirmDelete) return;
-
+    setIsDeleting(true);
     try {
       const { data: tokenData } = await authClient.token();
 
@@ -162,13 +174,15 @@ export default function PublicRequestsClient({
       }
     } catch {
       toast.error("Something went wrong");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return (
     <div
       className={`w-full max-w-7xl mx-auto px-4 py-8 space-y-6 select-none transition-opacity duration-200 ${
-        isPending ? "opacity-60 pointer-events-none" : "opacity-100"
+        isPending || isDeleting ? "opacity-60 pointer-events-none" : "opacity-100"
       }`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -301,15 +315,43 @@ export default function PublicRequestsClient({
                           >
                             <Eye className="size-4 text-zinc-500" />
                           </Button>
+                          
                           {userRole === "admin" && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="size-8 rounded-lg hover:bg-rose-500/10 hover:text-rose-600 group"
-                              onClick={() => handleDelete(req._id)}
-                            >
-                              <Trash2 className="size-4 text-zinc-500 group-hover:text-rose-600" />
-                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="size-8 rounded-lg hover:bg-rose-500/10 hover:text-rose-600 group"
+                                >
+                                  <Trash2 className="size-4 text-zinc-500 group-hover:text-rose-600" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="rounded-2xl max-w-md border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950">
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+                                    Are you absolutely sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription className="text-sm text-zinc-500 dark:text-zinc-400">
+                                    This action cannot be undone. This will permanently delete the donation request for{" "}
+                                    <span className="font-semibold text-zinc-900 dark:text-zinc-200">
+                                      {req.recipientName} ({req.bloodGroup})
+                                    </span>.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter className="gap-2 sm:gap-0">
+                                  <AlertDialogCancel className="rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs font-semibold h-9 mr-2">
+                                    Cancel
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(req._id)}
+                                    className="rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold h-9 border-none shadow-sm"
+                                  >
+                                    Delete Request
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           )}
                         </div>
                       </TableCell>

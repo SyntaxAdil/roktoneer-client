@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import DonationRequestClient from "../../my-requests/[...id]/DonationRequestClient";
+import DonationRequestClient from "../../my-requests/[id]/DonationRequestClient";
 
 
 export default async function DonationRequestDetails({ params }) {
