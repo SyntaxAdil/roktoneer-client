@@ -31,11 +31,7 @@ import {
   SelectValue,
 } from "../../../../components/ui/select";
 
-import {
-  bdDistricts,
-  bdUpazilas,
-  bloodGroupsInfo,
-} from "@/assets/staticDatas";
+import { bdDistricts, bdUpazilas, bloodGroupsInfo } from "@/assets/staticDatas";
 
 const bloodGroups = bloodGroupsInfo.map((i) => i.group);
 
@@ -51,13 +47,7 @@ export default function MyProfile() {
 
   const user = session?.user;
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-  } = useForm({
+  const { register, handleSubmit, reset, setValue, watch } = useForm({
     values: {
       name: user?.name || "",
       picture: "",
@@ -79,9 +69,19 @@ export default function MyProfile() {
   }, [user]);
 
   useEffect(() => {
+  if (user?.district) {
     const district = bdDistricts.find(
-      (d) => d.name === selectedDistrict,
+      (d) => d.name === user.district
     );
+
+    if (district) {
+      setDistrictId(String(district.id));
+    }
+  }
+}, [user]);
+
+  useEffect(() => {
+    const district = bdDistricts.find((d) => d.name === selectedDistrict);
 
     if (district) {
       setDistrictId(district.id);
@@ -151,9 +151,7 @@ export default function MyProfile() {
           },
           onError: (ctx) => {
             setIsSubmitting(false);
-            setServerError(
-              ctx?.error?.message || "Something went wrong.",
-            );
+            setServerError(ctx?.error?.message || "Something went wrong.");
           },
         },
       );
@@ -167,6 +165,8 @@ export default function MyProfile() {
       setServerError("Something went wrong.");
     }
   };
+
+
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-8">
@@ -195,9 +195,7 @@ export default function MyProfile() {
                   <label className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-all">
                     <div className="flex flex-col items-center gap-1 text-white">
                       <Upload className="size-5" />
-                      <span className="text-[10px] font-semibold">
-                        Upload
-                      </span>
+                      <span className="text-[10px] font-semibold">Upload</span>
                     </div>
 
                     <input
@@ -255,10 +253,7 @@ export default function MyProfile() {
             </button>
           </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-10"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-500">
@@ -311,9 +306,7 @@ export default function MyProfile() {
                 <Select
                   disabled={!isEditing}
                   value={selectedBloodGroup || ""}
-                  onValueChange={(value) =>
-                    setValue("bloodGroup", value)
-                  }
+                  onValueChange={(value) => setValue("bloodGroup", value)}
                 >
                   <SelectTrigger className="w-full h-12 rounded-2xl">
                     <SelectValue placeholder="Select Blood Group" />
@@ -340,21 +333,15 @@ export default function MyProfile() {
                 <Select
                   disabled={!isEditing}
                   value={
-                    bdDistricts.find(
-                      (d) => d.name === selectedDistrict,
-                    )?.id || ""
+                    bdDistricts.find((d) => d.name === selectedDistrict)?.id ||
+                    ""
                   }
                   onValueChange={(value) => {
-                    const district = bdDistricts.find(
-                      (d) => d.id === value,
-                    );
+                    const district = bdDistricts.find((d) => d.id === value);
 
                     setDistrictId(value);
 
-                    setValue(
-                      "district",
-                      district?.name || "",
-                    );
+                    setValue("district", district?.name || "");
 
                     setValue("upazila", "");
                   }}
@@ -384,19 +371,12 @@ export default function MyProfile() {
                 <Select
                   disabled={!isEditing || !districtId}
                   value={
-                    bdUpazilas.find(
-                      (u) => u.name === selectedUpazila,
-                    )?.id || ""
+                    bdUpazilas.find((u) => u.name === selectedUpazila)?.id || ""
                   }
                   onValueChange={(value) => {
-                    const upazila = bdUpazilas.find(
-                      (u) => u.id === value,
-                    );
+                    const upazila = bdUpazilas.find((u) => u.id === value);
 
-                    setValue(
-                      "upazila",
-                      upazila?.name || "",
-                    );
+                    setValue("upazila", upazila?.name || "");
                   }}
                 >
                   <SelectTrigger className="w-full h-12 rounded-2xl">
@@ -407,15 +387,10 @@ export default function MyProfile() {
                     <SelectGroup>
                       {bdUpazilas
                         .filter(
-                          (u) =>
-                            u.district_id ===
-                            String(districtId),
+                          (u) => String(u.district_id) === String(districtId),
                         )
                         .map((u) => (
-                          <SelectItem
-                            key={u.id}
-                            value={u.id}
-                          >
+                          <SelectItem key={u.id} value={String(u.id)}>
                             {u.name}
                           </SelectItem>
                         ))}

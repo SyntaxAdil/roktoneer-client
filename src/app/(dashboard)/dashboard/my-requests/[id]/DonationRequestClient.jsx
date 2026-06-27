@@ -273,7 +273,7 @@ export default function DonationRequestClient({ request }) {
               <div>
                 <p className="text-[11px] text-muted-foreground">Venue / Region</p>
                 <p className="text-sm font-medium text-foreground">
-                  {request.recipientUpazila}, {request.recipientDistrict}
+                 {request.fullAddress}, {request.recipientUpazila}, {request.recipientDistrict}
                 </p>
               </div>
             </div>
