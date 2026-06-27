@@ -1,20 +1,10 @@
 "use client";
 
-import React, {
-  useTransition,
-} from "react";
+import React, { useTransition } from "react";
 
-import {
-  usePathname,
-  useRouter,
-} from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-import {
-  Shield,
-  SlidersHorizontal,
-  UserCheck,
-  UserX,
-} from "lucide-react";
+import { Shield, SlidersHorizontal, UserCheck, UserX } from "lucide-react";
 
 import toast from "react-hot-toast";
 
@@ -57,177 +47,121 @@ export default function AllUsersClient({
 
   const pathname = usePathname();
 
-  const [isPending, startTransition] =
-    useTransition();
+  const [isPending, startTransition] = useTransition();
 
-  const totalPages = Math.ceil(
-    total / limit,
-  );
+  const totalPages = Math.ceil(total / limit);
 
-  const updateURL = (
-    page,
-    status,
-  ) => {
-    const params =
-      new URLSearchParams();
+  const updateURL = (page, status) => {
+    const params = new URLSearchParams();
 
     if (page > 1) {
-      params.set(
-        "page",
-        page.toString(),
-      );
+      params.set("page", page.toString());
     }
 
-    if (
-      status &&
-      status !== "all"
-    ) {
-      params.set(
-        "status",
-        status,
-      );
+    if (status && status !== "all") {
+      params.set("status", status);
     }
 
     startTransition(() => {
-      router.push(
-        `${pathname}?${params.toString()}`,
-      );
+      router.push(`${pathname}?${params.toString()}`);
     });
   };
 
-  const handlePageChange = (
-    page,
-  ) => {
-    if (
-      page < 1 ||
-      page > totalPages
-    ) {
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) {
       return;
     }
 
-    updateURL(
-      page,
-      currentStatus,
-    );
+    updateURL(page, currentStatus);
   };
 
-  const handleRoleChange =
-    async (id, role) => {
-      try {
-        const {
-          data: tokenData,
-        } =
-          await authClient.token();
+  const handleRoleChange = async (id, role) => {
+    try {
+      const { data: tokenData } = await authClient.token();
 
-        const res =
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/users/role/${id}`,
-            {
-              method: "PATCH",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/role/${id}`,
+        {
+          method: "PATCH",
 
-              headers: {
-                "Content-Type":
-                  "application/json",
+          headers: {
+            "Content-Type": "application/json",
 
-                authorization: `Bearer ${tokenData?.token}`,
-              },
+            authorization: `Bearer ${tokenData?.token}`,
+          },
 
-              body: JSON.stringify({
-                role,
-              }),
-            },
-          );
+          body: JSON.stringify({
+            role,
+          }),
+        },
+      );
 
-        const result =
-          await res.json();
+      const result = await res.json();
 
-        if (result.success) {
-          toast.success(
-            "Role updated successfully",
-          );
+      if (result.success) {
+        toast.success("Role updated successfully");
 
-          router.refresh();
-        } else {
-          toast.error(
-            result.message,
-          );
-        }
-      } catch {
-        toast.error(
-          "Failed to update role",
-        );
+        router.refresh();
+      } else {
+        toast.error(result.message);
       }
-    };
+    } catch {
+      toast.error("Failed to update role");
+    }
+  };
 
-  const handleStatusChange =
-    async (id, status) => {
-      try {
-        const {
-          data: tokenData,
-        } =
-          await authClient.token();
+  const handleStatusChange = async (id, status) => {
+    try {
+      const { data: tokenData } = await authClient.token();
 
-        const res =
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/users/status/${id}`,
-            {
-              method: "PATCH",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/status/${id}`,
+        {
+          method: "PATCH",
 
-              headers: {
-                "Content-Type":
-                  "application/json",
+          headers: {
+            "Content-Type": "application/json",
 
-                authorization: `Bearer ${tokenData?.token}`,
-              },
+            authorization: `Bearer ${tokenData?.token}`,
+          },
 
-              body: JSON.stringify({
-                status,
-              }),
-            },
-          );
+          body: JSON.stringify({
+            status,
+          }),
+        },
+      );
 
-        const result =
-          await res.json();
+      const result = await res.json();
 
-        if (result.success) {
-          toast.success(
-            "Status updated successfully",
-          );
+      if (result.success) {
+        toast.success("Status updated successfully");
 
-          router.refresh();
-        } else {
-          toast.error(
-            result.message,
-          );
-        }
-      } catch {
-        toast.error(
-          "Failed to update status",
-        );
+        router.refresh();
+      } else {
+        toast.error(result.message);
       }
-    };
+    } catch {
+      toast.error("Failed to update status");
+    }
+  };
 
   return (
     <div
       className={`w-full max-w-7xl mx-auto px-4 py-8 space-y-6 transition-opacity duration-200 ${
-        isPending
-          ? "opacity-60 pointer-events-none"
-          : "opacity-100"
+        isPending ? "opacity-60 pointer-events-none" : "opacity-100"
       }`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight flex items-center gap-2">
             User Management
-
             <span className="inline-flex items-center text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/10">
               Admin
             </span>
           </h1>
 
           <p className="text-xs text-muted-foreground mt-1">
-            Manage user roles and
-            account restrictions.
+            Manage user roles and account restrictions.
           </p>
         </div>
 
@@ -236,34 +170,19 @@ export default function AllUsersClient({
 
           <Select
             key={currentStatus}
-            defaultValue={
-              currentStatus
-            }
-            onValueChange={(
-              value,
-            ) =>
-              updateURL(
-                1,
-                value,
-              )
-            }
+            defaultValue={currentStatus}
+            onValueChange={(value) => updateURL(1, value)}
           >
             <SelectTrigger className="w-[130px] h-8 text-xs font-semibold border-none bg-transparent focus:ring-0 focus:ring-offset-0 shadow-none">
               <SelectValue />
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="all">
-                All Users
-              </SelectItem>
+              <SelectItem value="all">All Users</SelectItem>
 
-              <SelectItem value="active">
-                Active
-              </SelectItem>
+              <SelectItem value="active">Active</SelectItem>
 
-              <SelectItem value="blocked">
-                Blocked
-              </SelectItem>
+              <SelectItem value="blocked">Blocked</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -275,138 +194,110 @@ export default function AllUsersClient({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
-                    Name
-                  </TableHead>
+                  <TableHead>Name</TableHead>
 
-                  <TableHead>
-                    Email
-                  </TableHead>
+                  <TableHead>Email</TableHead>
 
-                  <TableHead>
-                    Role
-                  </TableHead>
+                  <TableHead>Role</TableHead>
 
-                  <TableHead>
-                    Status
-                  </TableHead>
+                  <TableHead>Status</TableHead>
 
-                  <TableHead className="text-right">
-                    Action
-                  </TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
 
               <TableBody>
-                {users.map(
-                  (user) => (
-                    <TableRow
-                      key={
-                        user._id
-                      }
-                    >
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-bold">
-                            {
-                              user.name
-                            }
-                          </span>
-
-                          <span className="text-[10px] text-muted-foreground">
-                            {
-                              user._id
-                            }
-                          </span>
+                {users.map((user) => (
+                  <TableRow key={user._id}>
+                    <TableCell className="py-3 pl-3">
+                      <div className="flex items-center gap-2.5 group/cell">
+                        <div className="size-7 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-black text-zinc-500 group-hover/cell:bg-red-50 dark:group-hover/cell:bg-red-950/30 group-hover/cell:text-red-500 transition-colors uppercase shrink-0">
+                          {user?.name ? user.name.substring(0, 2) : "UD"}
                         </div>
-                      </TableCell>
 
-                      <TableCell>
-                        {
-                          user.email
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-xs text-zinc-800 dark:text-zinc-200 truncate max-w-[140px] sm:max-w-none">
+                            {user?.name || "Unknown Donor"}
+                          </span>
+
+                          <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 dark:text-zinc-500 font-medium mt-0.5">
+                            <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                              ${user?.fund ? user.fund.toLocaleString() : "0"}
+                            </span>
+                            <span className="size-0.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                            <span>
+                              {user?.fundDate
+                                ? new Date(user.fundDate).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    },
+                                  )
+                                : "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    <TableCell>{user.email}</TableCell>
+
+                    <TableCell>
+                      <Select
+                        defaultValue={user.role}
+                        onValueChange={(value) =>
+                          handleRoleChange(user._id, value)
                         }
-                      </TableCell>
+                      >
+                        <SelectTrigger className="w-[120px]">
+                          <SelectValue />
+                        </SelectTrigger>
 
-                      <TableCell>
-                        <Select
-                          defaultValue={
-                            user.role
+                        <SelectContent>
+                          <SelectItem value="donor">Donor</SelectItem>
+
+                          <SelectItem value="volunteer">Volunteer</SelectItem>
+
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
+                          user.status === "active"
+                            ? "bg-emerald-100 text-emerald-600"
+                            : "bg-red-100 text-red-600"
+                        }`}
+                      >
+                        {user.status}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      {user.status === "active" ? (
+                        <button
+                          onClick={() =>
+                            handleStatusChange(user._id, "blocked")
                           }
-                          onValueChange={(
-                            value,
-                          ) =>
-                            handleRoleChange(
-                              user._id,
-                              value,
-                            )
-                          }
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-red-200 text-red-500"
                         >
-                          <SelectTrigger className="w-[120px]">
-                            <SelectValue />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            <SelectItem value="donor">
-                              Donor
-                            </SelectItem>
-
-                            <SelectItem value="volunteer">
-                              Volunteer
-                            </SelectItem>
-
-                            <SelectItem value="admin">
-                              Admin
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
-                            user.status ===
-                            "active"
-                              ? "bg-emerald-100 text-emerald-600"
-                              : "bg-red-100 text-red-600"
-                          }`}
+                          <UserX className="size-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleStatusChange(user._id, "active")}
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-emerald-200 text-emerald-500"
                         >
-                          {
-                            user.status
-                          }
-                        </span>
-                      </TableCell>
-
-                      <TableCell className="text-right">
-                        {user.status ===
-                        "active" ? (
-                          <button
-                            onClick={() =>
-                              handleStatusChange(
-                                user._id,
-                                "blocked",
-                              )
-                            }
-                            className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-red-200 text-red-500"
-                          >
-                            <UserX className="size-4" />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleStatusChange(
-                                user._id,
-                                "active",
-                              )
-                            }
-                            className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-emerald-200 text-emerald-500"
-                          >
-                            <UserCheck className="size-4" />
-                          </button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ),
-                )}
+                          <UserCheck className="size-4" />
+                        </button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
@@ -417,50 +308,31 @@ export default function AllUsersClient({
                 <PaginationItem>
                   <PaginationPrevious
                     href="#"
-                    onClick={(
-                      e,
-                    ) => {
+                    onClick={(e) => {
                       e.preventDefault();
 
-                      handlePageChange(
-                        currentPage -
-                          1,
-                      );
+                      handlePageChange(currentPage - 1);
                     }}
                     className={
-                      currentPage ===
-                      1
-                        ? "pointer-events-none opacity-40"
-                        : ""
+                      currentPage === 1 ? "pointer-events-none opacity-40" : ""
                     }
                   />
                 </PaginationItem>
 
                 {Array.from(
                   {
-                    length:
-                      totalPages,
+                    length: totalPages,
                   },
-                  (_, i) =>
-                    i + 1,
+                  (_, i) => i + 1,
                 ).map((page) => (
-                  <PaginationItem
-                    key={page}
-                  >
+                  <PaginationItem key={page}>
                     <PaginationLink
                       href="#"
-                      isActive={
-                        currentPage ===
-                        page
-                      }
-                      onClick={(
-                        e,
-                      ) => {
+                      isActive={currentPage === page}
+                      onClick={(e) => {
                         e.preventDefault();
 
-                        handlePageChange(
-                          page,
-                        );
+                        handlePageChange(page);
                       }}
                     >
                       {page}
@@ -471,19 +343,13 @@ export default function AllUsersClient({
                 <PaginationItem>
                   <PaginationNext
                     href="#"
-                    onClick={(
-                      e,
-                    ) => {
+                    onClick={(e) => {
                       e.preventDefault();
 
-                      handlePageChange(
-                        currentPage +
-                          1,
-                      );
+                      handlePageChange(currentPage + 1);
                     }}
                     className={
-                      currentPage ===
-                      totalPages
+                      currentPage === totalPages
                         ? "pointer-events-none opacity-40"
                         : ""
                     }
@@ -497,9 +363,7 @@ export default function AllUsersClient({
         <div className="w-full min-h-[300px] flex flex-col items-center justify-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
           <Shield className="size-8 text-zinc-400" />
 
-          <p className="text-xs text-muted-foreground mt-2">
-            No users found.
-          </p>
+          <p className="text-xs text-muted-foreground mt-2">No users found.</p>
         </div>
       )}
     </div>

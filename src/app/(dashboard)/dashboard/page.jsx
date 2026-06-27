@@ -8,7 +8,33 @@ import DonorDashboard from "@/components/dashboard/DonorDashboard";
 
 import DashboardHeader from "../../../components/dashboard/DashboardHeader";
 
+async function getFundCount() {
+
+  try {
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/funds/total-funds`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    const result = await res.json();
+
+    return result.success ? result.totalFunds : 0;
+
+  } catch (error) {
+
+    console.error(error);
+
+    return 0;
+
+  }
+
+}
+
 export default async function DashboardPage() {
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -23,18 +49,23 @@ export default async function DashboardPage() {
     process.env.NEXT_PUBLIC_API_URL;
 
   let requests = [];
+
   let stats = {};
 
   try {
+
     if (
       user?.role === "admin" ||
       user?.role === "volunteer"
     ) {
+
       const [
         donorsRes,
         requestsRes,
         usersRes,
+        totalFunding
       ] = await Promise.all([
+
         fetch(
           `${baseUrl}/api/active-donors-count`,
           {
@@ -58,6 +89,9 @@ export default async function DashboardPage() {
             cache: "no-store",
           }
         ),
+
+        getFundCount()
+
       ]);
 
       const donorsData =
@@ -84,6 +118,7 @@ export default async function DashboardPage() {
         .slice(0, 6);
 
       stats = {
+
         totalDonors:
           donorsData?.data || 0,
 
@@ -97,7 +132,7 @@ export default async function DashboardPage() {
         totalRequests:
           allRequests.length,
 
-        totalFunding: 0,
+        totalFunding,
 
         activeRequests:
           allRequests.filter(
@@ -122,11 +157,12 @@ export default async function DashboardPage() {
               "inprogress"
           ).length,
 
-        done: allRequests.filter(
-          (r) =>
-            r.donationStatus ===
-            "done"
-        ).length,
+        done:
+          allRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "done"
+          ).length,
 
         canceled:
           allRequests.filter(
@@ -134,8 +170,11 @@ export default async function DashboardPage() {
               r.donationStatus ===
               "canceled"
           ).length,
+
       };
+
     } else {
+
       const res = await fetch(
         `${baseUrl}/api/donation-request/${user?.email}?limit=9999`,
         {
@@ -160,7 +199,9 @@ export default async function DashboardPage() {
         .slice(0, 6);
 
       stats = {
-        total: myRequests.length,
+
+        total:
+          myRequests.length,
 
         pending:
           myRequests.filter(
@@ -176,11 +217,12 @@ export default async function DashboardPage() {
               "inprogress"
           ).length,
 
-        done: myRequests.filter(
-          (r) =>
-            r.donationStatus ===
-            "done"
-        ).length,
+        done:
+          myRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "done"
+          ).length,
 
         canceled:
           myRequests.filter(
@@ -188,13 +230,19 @@ export default async function DashboardPage() {
               r.donationStatus ===
               "canceled"
           ).length,
+
       };
+
     }
+
   } catch (error) {
+
     console.log(error);
+
   }
 
   switch (user?.role) {
+
     case "admin":
       return (
         <>
@@ -230,5 +278,7 @@ export default async function DashboardPage() {
           />
         </>
       );
+
   }
+
 }
