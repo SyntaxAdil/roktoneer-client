@@ -8,6 +8,8 @@ const nextConfig = {
       },
     ],
   },
+   
+  
   // experimental: {
   //   serverComponentsExternalPackages: ["@better-auth/kysely-adapter"],
   // },
