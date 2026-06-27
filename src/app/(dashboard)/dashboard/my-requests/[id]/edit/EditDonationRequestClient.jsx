@@ -8,11 +8,7 @@ import { useForm } from "react-hook-form";
 
 import { authClient } from "@/lib/auth/auth-client";
 
-import {
-  bdDistricts,
-  bdUpazilas,
-  bloodGroupsInfo,
-} from "@/assets/staticDatas";
+import { bdDistricts, bdUpazilas, bloodGroupsInfo } from "@/assets/staticDatas";
 
 import { Button } from "@/components/ui/button";
 
@@ -25,93 +21,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const bloodGroups = bloodGroupsInfo.map(
-  (item) => item.group,
-);
+const bloodGroups = bloodGroupsInfo.map((item) => item.group);
 
-export default function EditDonationRequestClient({
-  initialData,
-  id,
-}) {
+export default function EditDonationRequestClient({ initialData, id }) {
   const router = useRouter();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-  } = useForm({
+  const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
-      recipientName:
-        initialData?.recipientName || "",
+      recipientName: initialData?.recipientName || "",
 
-      bloodGroup:
-        initialData?.bloodGroup || "",
+      bloodGroup: initialData?.bloodGroup || "",
 
-      recipientDistrict:
-        initialData?.recipientDistrict ||
-        "",
+      recipientDistrict: initialData?.recipientDistrict || "",
 
-      recipientUpazila:
-        initialData?.recipientUpazila ||
-        "",
+      recipientUpazila: initialData?.recipientUpazila || "",
 
-      hospitalName:
-        initialData?.hospitalName || "",
+      hospitalName: initialData?.hospitalName || "",
 
-      fullAddress:
-        initialData?.fullAddress || "",
+      fullAddress: initialData?.fullAddress || "",
 
-      contactNumber:
-        initialData?.contactNumber || "",
+      contactNumber: initialData?.contactNumber || "",
 
-      donationDate:
-        initialData?.donationDate || "",
+      donationDate: initialData?.donationDate || "",
 
-      donationTime:
-        initialData?.donationTime || "",
+      donationTime: initialData?.donationTime || "",
 
-      description:
-        initialData?.description || "",
+      description: initialData?.description || "",
     },
   });
 
-  const selectedBloodGroup =
-    watch("bloodGroup");
+  const selectedBloodGroup = watch("bloodGroup");
 
-  const selectedDistrict =
-    watch("recipientDistrict");
+  const selectedDistrict = watch("recipientDistrict");
 
-  const selectedUpazila = watch(
-    "recipientUpazila",
-  );
+  const selectedUpazila = watch("recipientUpazila");
 
   const districtId = useMemo(() => {
-    const district =
-      bdDistricts.find(
-        (d) =>
-          d.name === selectedDistrict,
-      );
+    const district = bdDistricts.find((d) => d.name === selectedDistrict);
 
     return district?.id || "";
   }, [selectedDistrict]);
 
-  const filteredUpazilas =
-    bdUpazilas.filter(
-      (u) =>
-        String(u.district_id) ===
-        String(districtId),
-    );
+  const filteredUpazilas = bdUpazilas.filter(
+    (u) => String(u.district_id) === String(districtId),
+  );
 
   const onSubmit = async (data) => {
     setLoading(true);
 
     try {
-      const { data: tokenData } =
-        await authClient.token();
+      const { data: tokenData } = await authClient.token();
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/donation-requests/${id}`,
@@ -119,8 +80,7 @@ export default function EditDonationRequestClient({
           method: "PATCH",
 
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
 
             authorization: `Bearer ${tokenData?.token}`,
           },
@@ -132,20 +92,13 @@ export default function EditDonationRequestClient({
       const result = await res.json();
 
       if (result.success) {
-        toast.success(
-          "Donation request updated successfully",
-        );
+        toast.success("Donation request updated successfully");
 
-        router.push(
-          "/dashboard/my-requests",
-        );
+        router.push("/dashboard/my-requests");
 
         router.refresh();
       } else {
-        toast.error(
-          result.message ||
-            "Failed to update request",
-        );
+        toast.error(result.message || "Failed to update request");
       }
     } catch {
       toast.error("Something went wrong");
@@ -172,16 +125,13 @@ export default function EditDonationRequestClient({
         </h1>
 
         <p className="text-xs text-muted-foreground mt-1">
-          Modify the urgency data,
-          location logistics, or
-          schedules for this pipeline.
+          Modify the urgency data, location logistics, or schedules for this
+          pipeline.
         </p>
       </div>
 
       <form
-        onSubmit={handleSubmit(
-          onSubmit,
-        )}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 rounded-2xl p-6 shadow-sm space-y-6"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -192,9 +142,7 @@ export default function EditDonationRequestClient({
 
             <input
               type="text"
-              {...register(
-                "recipientName",
-              )}
+              {...register("recipientName")}
               className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
@@ -205,18 +153,8 @@ export default function EditDonationRequestClient({
             </label>
 
             <Select
-              value={
-                selectedBloodGroup ||
-                ""
-              }
-              onValueChange={(
-                value,
-              ) =>
-                setValue(
-                  "bloodGroup",
-                  value,
-                )
-              }
+              value={selectedBloodGroup || ""}
+              onValueChange={(value) => setValue("bloodGroup", value)}
             >
               <SelectTrigger className="w-full h-10 rounded-xl text-xs">
                 <SelectValue placeholder="Select Blood Group" />
@@ -224,16 +162,11 @@ export default function EditDonationRequestClient({
 
               <SelectContent>
                 <SelectGroup>
-                  {bloodGroups.map(
-                    (group) => (
-                      <SelectItem
-                        key={group}
-                        value={group}
-                      >
-                        {group}
-                      </SelectItem>
-                    ),
-                  )}
+                  {bloodGroups.map((group) => (
+                    <SelectItem key={group} value={group}>
+                      {group}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -245,22 +178,11 @@ export default function EditDonationRequestClient({
             </label>
 
             <Select
-              value={
-                selectedDistrict ||
-                ""
-              }
-              onValueChange={(
-                value,
-              ) => {
-                setValue(
-                  "recipientDistrict",
-                  value,
-                );
+              value={selectedDistrict || ""}
+              onValueChange={(value) => {
+                setValue("recipientDistrict", value);
 
-                setValue(
-                  "recipientUpazila",
-                  "",
-                );
+                setValue("recipientUpazila", "");
               }}
             >
               <SelectTrigger className="w-full h-10 rounded-xl text-xs">
@@ -269,22 +191,11 @@ export default function EditDonationRequestClient({
 
               <SelectContent>
                 <SelectGroup>
-                  {bdDistricts.map(
-                    (district) => (
-                      <SelectItem
-                        key={
-                          district.id
-                        }
-                        value={
-                          district.name
-                        }
-                      >
-                        {
-                          district.name
-                        }
-                      </SelectItem>
-                    ),
-                  )}
+                  {bdDistricts.map((district) => (
+                    <SelectItem key={district.id} value={district.name}>
+                      {district.name}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -297,18 +208,8 @@ export default function EditDonationRequestClient({
 
             <Select
               disabled={!districtId}
-              value={
-                selectedUpazila ||
-                ""
-              }
-              onValueChange={(
-                value,
-              ) =>
-                setValue(
-                  "recipientUpazila",
-                  value,
-                )
-              }
+              value={selectedUpazila || ""}
+              onValueChange={(value) => setValue("recipientUpazila", value)}
             >
               <SelectTrigger className="w-full h-10 rounded-xl text-xs">
                 <SelectValue placeholder="Select Upazila" />
@@ -316,22 +217,11 @@ export default function EditDonationRequestClient({
 
               <SelectContent>
                 <SelectGroup>
-                  {filteredUpazilas.map(
-                    (upazila) => (
-                      <SelectItem
-                        key={
-                          upazila.id
-                        }
-                        value={
-                          upazila.name
-                        }
-                      >
-                        {
-                          upazila.name
-                        }
-                      </SelectItem>
-                    ),
-                  )}
+                  {filteredUpazilas.map((upazila) => (
+                    <SelectItem key={upazila.id} value={upazila.name}>
+                      {upazila.name}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -344,9 +234,7 @@ export default function EditDonationRequestClient({
 
             <input
               type="tel"
-              {...register(
-                "contactNumber",
-              )}
+              {...register("contactNumber")}
               className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500"
               placeholder="+8801XXXXXXXXX"
             />
@@ -359,9 +247,7 @@ export default function EditDonationRequestClient({
 
             <input
               type="text"
-              {...register(
-                "hospitalName",
-              )}
+              {...register("hospitalName")}
               className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
@@ -373,9 +259,7 @@ export default function EditDonationRequestClient({
 
             <input
               type="text"
-              {...register(
-                "fullAddress",
-              )}
+              {...register("fullAddress")}
               className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
@@ -386,11 +270,20 @@ export default function EditDonationRequestClient({
             </label>
 
             <input
+              {...register("donationDate", {
+                required: "Donation date is required",
+                validate: (value) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  const selectedDate = new Date(value);
+
+                  return selectedDate >= today || "Past dates are not allowed";
+                },
+              })}
               type="date"
-              {...register(
-                "donationDate",
-              )}
-              className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500"
+              min={new Date().toISOString().split("T")[0]}
+              className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all cursor-pointer"
             />
           </div>
 
@@ -401,24 +294,19 @@ export default function EditDonationRequestClient({
 
             <input
               type="time"
-              {...register(
-                "donationTime",
-              )}
+              {...register("donationTime")}
               className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
 
           <div className="space-y-2 sm:col-span-2">
             <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-              Emergency Note /
-              Description
+              Emergency Note / Description
             </label>
 
             <textarea
               rows={4}
-              {...register(
-                "description",
-              )}
+              {...register("description")}
               className="w-full p-3 text-xs font-medium rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent focus:outline-none focus:ring-1 focus:ring-red-500 resize-none"
               placeholder="State medical criticalities or custom instructions..."
             />
@@ -429,9 +317,7 @@ export default function EditDonationRequestClient({
           <Button
             type="button"
             variant="outline"
-            onClick={() =>
-              router.back()
-            }
+            onClick={() => router.back()}
             disabled={loading}
             className="rounded-xl text-xs font-bold h-10 px-4"
           >
