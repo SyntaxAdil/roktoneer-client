@@ -10,25 +10,26 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { FieldLabel } from "../../../components/ui/field";
+import { Info } from "lucide-react";
 
 export default function DonorTerms() {
   return (
     <div className="w-full">
       <FieldLabel
         htmlFor="terms"
-        className="text-xs text-muted-foreground leading-relaxed"
+        className="text-xs text-muted-foreground leading-relaxed flex flex-wrap items-center gap-x-1"
       >
         <span>
-          I agree to register as an active donor, acknowledging the{" "}
+          I agree to share my donation data globally for emergency requests and understand that any platform misuse will lead to an immediate
         </span>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button
               type="button"
-              className="inline font-semibold text-red-500 hover:underline"
+              className="font-bold text-red-500 hover:underline inline-flex items-center"
             >
-              Donor Platform Rules & Privacy Consent
+              <Info size={16} className="mr-1" ></Info> Account Block & Ban
             </button>
           </AlertDialogTrigger>
 
@@ -92,7 +93,7 @@ export default function DonorTerms() {
           </AlertDialogContent>
         </AlertDialog>
 
-        <span> of RoktoNeer.</span>
+        <span>under the conditions of RoktoNeer.</span>
       </FieldLabel>
     </div>
   );
