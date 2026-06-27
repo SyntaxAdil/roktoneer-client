@@ -6,16 +6,11 @@ import StatsCards from "./StatsCards";
 import RecentRequestsTable from "./RecentRequestsTable";
 import AnalyticsChart from "./AnalyticsChart";
 
-export default function DonorDashboard({
-  requests,
-  stats,
-}) {
+export default function DonorDashboard({ requests, stats }) {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-black tracking-tight">
-          Donor Dashboard
-        </h1>
+        <h1 className="text-3xl font-black tracking-tight">Donor Dashboard</h1>
 
         <p className="text-sm text-muted-foreground mt-1">
           Overview of your donation requests and activities.
@@ -28,6 +23,7 @@ export default function DonorDashboard({
         <div className="xl:col-span-2">
           <RecentRequestsTable
             requests={requests}
+            role="donor"
             title="My Recent Requests"
             description="Your latest 6 blood requests."
           />

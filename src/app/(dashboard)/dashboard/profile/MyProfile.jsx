@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -14,7 +15,6 @@ import {
   MapPin,
   Building,
   Edit3,
-  ShieldCheck,
   X,
   Check,
   Loader2,
@@ -69,22 +69,22 @@ export default function MyProfile() {
   }, [user]);
 
   useEffect(() => {
-  if (user?.district) {
-    const district = bdDistricts.find(
-      (d) => d.name === user.district
-    );
+    if (user?.district) {
+      const district = bdDistricts.find(
+        (d) => d.name === user.district,
+      );
 
-    if (district) {
-      setDistrictId(String(district.id));
+      if (district) {
+        setDistrictId(String(district.id));
+      }
     }
-  }
-}, [user]);
+  }, [user]);
 
   useEffect(() => {
     const district = bdDistricts.find((d) => d.name === selectedDistrict);
 
     if (district) {
-      setDistrictId(district.id);
+      setDistrictId(String(district.id));
     }
   }, [selectedDistrict]);
 
@@ -133,6 +133,10 @@ export default function MyProfile() {
         }
       }
 
+      const selectedUpazilaData = bdUpazilas.find(
+        (u) => String(u.id) === String(data.upazila),
+      );
+
       const { error } = await authClient.updateUser(
         {
           name: data.name,
@@ -140,7 +144,7 @@ export default function MyProfile() {
           phoneNumber: data.phoneNumber,
           bloodGroup: data.bloodGroup,
           district: data.district,
-          upazila: data.upazila,
+          upazila: selectedUpazilaData?.name || "",
         },
         {
           onSuccess: () => {
@@ -165,8 +169,6 @@ export default function MyProfile() {
       setServerError("Something went wrong.");
     }
   };
-
-
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-8">
@@ -353,7 +355,7 @@ export default function MyProfile() {
                   <SelectContent>
                     <SelectGroup>
                       {bdDistricts.map((d) => (
-                        <SelectItem key={d.id} value={d.id}>
+                        <SelectItem key={d.id} value={String(d.id)}>
                           {d.name}
                         </SelectItem>
                       ))}
@@ -370,13 +372,9 @@ export default function MyProfile() {
 
                 <Select
                   disabled={!isEditing || !districtId}
-                  value={
-                    bdUpazilas.find((u) => u.name === selectedUpazila)?.id || ""
-                  }
+                  value={selectedUpazila || ""}
                   onValueChange={(value) => {
-                    const upazila = bdUpazilas.find((u) => u.id === value);
-
-                    setValue("upazila", upazila?.name || "");
+                    setValue("upazila", value);
                   }}
                 >
                   <SelectTrigger className="w-full h-12 rounded-2xl">
@@ -387,7 +385,8 @@ export default function MyProfile() {
                     <SelectGroup>
                       {bdUpazilas
                         .filter(
-                          (u) => String(u.district_id) === String(districtId),
+                          (u) =>
+                            String(u.district_id) === String(districtId),
                         )
                         .map((u) => (
                           <SelectItem key={u.id} value={String(u.id)}>

@@ -53,8 +53,8 @@ export default function RecentRequestsTable({
         <Link
           href={
             role === "donor"
-              ? "/dashboard/my-donation-requests"
-              : "/dashboard/all-blood-donation-request"
+              ? "/dashboard/my-requests"
+              : "/dashboard/public-requests"
           }
           className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
         >

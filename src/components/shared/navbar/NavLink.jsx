@@ -5,17 +5,18 @@ import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-const NavLink = ({ href, children, className }) => {
+const NavLink = ({ href, children, className, onClick }) => {
   const pathname = usePathname();
   const isActive = pathname === href;
 
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn(
         "relative px-4 py-1.5 text-sm font-medium transition-colors duration-300 outline-none select-none rounded-full block text-center",
-        isActive 
-          ? "text-red-600 dark:text-red-400 font-semibold" 
+        isActive
+          ? "text-red-600 dark:text-red-400 font-semibold"
           : "text-muted-foreground hover:text-foreground",
         className
       )}
@@ -31,8 +32,7 @@ const NavLink = ({ href, children, className }) => {
           }}
         />
       )}
-      
-      
+
       <span className="relative z-10">{children}</span>
     </Link>
   );
