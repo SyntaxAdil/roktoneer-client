@@ -2,7 +2,6 @@ import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -14,48 +13,86 @@ import { FieldLabel } from "../../../components/ui/field";
 
 export default function DonorTerms() {
   return (
-    <div className="flex items-start gap-2">
+    <div className="w-full">
       <FieldLabel
         htmlFor="terms"
-        className="text-xs text-muted-foreground cursor-pointer select-none leading-normal"
+        className="text-xs text-muted-foreground leading-relaxed"
       >
-        I agree to register as an active donor, acknowledging the{" "}
+        <span>
+          I agree to register as an active donor, acknowledging the{" "}
+        </span>
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <span className="text-red-500 hover:underline font-semibold cursor-pointer inline">
+            <button
+              type="button"
+              className="inline font-semibold text-red-500 hover:underline"
+            >
               Donor Platform Rules & Privacy Consent
-            </span>
+            </button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="sm:max-w-[460px] rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-lg font-black tracking-tight text-zinc-900 dark:text-zinc-50">
-                Donor Registration & Data Policy
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-zinc-500 dark:text-zinc-400 text-xs space-y-3 pt-2 text-left">
-                <p className="leading-relaxed">
-                  By registering as an active life-saving donor on Roktoneer, you explicitly accept and agree to the following system terms:
-                </p>
-                <ul className="list-disc pl-4 space-y-2 text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
-                  <li>
-                    <strong className="text-zinc-900 dark:text-zinc-50">Global Network Visibility:</strong> Your name, blood group, phone number, and location will be shared publicly across our network to connect you with critical emergency blood requests efficiently.
-                  </li>
-                  <li>
-                    <strong className="text-zinc-900 dark:text-zinc-50">Strict Abuse Ban:</strong> Any system misuse, fraudulent activity, harassment, or providing fabricated personal records will result in an immediate, permanent, irreversible account ban and block.
-                  </li>
-                  <li>
-                    <strong className="text-zinc-900 dark:text-zinc-50">Continuous Accuracy:</strong> You commit to updating your availability status honestly after any donation event to keep the data reliable.
-                  </li>
-                </ul>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="mt-4 flex sm:justify-end gap-2">
-              <AlertDialogAction className="bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider h-9 px-4">
-                I Understand & Agree
-              </AlertDialogAction>
-            </AlertDialogFooter>
+
+          <AlertDialogContent className="sm:max-w-lg rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-0 overflow-hidden">
+            <div className="p-6 space-y-5">
+              <AlertDialogHeader className="space-y-2 text-left">
+                <AlertDialogTitle className="text-xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
+                  Donor Registration & Data Policy
+                </AlertDialogTitle>
+
+                <AlertDialogDescription asChild>
+                  <div className="space-y-4 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                    <p>
+                      By registering as an active life-saving donor on
+                      RoktoNeer, you agree to the following platform policies
+                      and responsibilities.
+                    </p>
+
+                    <div className="space-y-3">
+                      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50 dark:bg-zinc-900/50">
+                        <h4 className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                          Global Network Visibility
+                        </h4>
+                        <p className="text-xs leading-relaxed">
+                          Your name, blood group, phone number, and location may
+                          be visible across the donor network to help connect
+                          emergency blood requests quickly.
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50 dark:bg-zinc-900/50">
+                        <h4 className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                          Strict Abuse Ban
+                        </h4>
+                        <p className="text-xs leading-relaxed">
+                          Fraud, harassment, fake information, or platform
+                          misuse can result in a permanent account suspension.
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50 dark:bg-zinc-900/50">
+                        <h4 className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">
+                          Availability Accuracy
+                        </h4>
+                        <p className="text-xs leading-relaxed">
+                          You agree to keep your donor availability updated after
+                          every donation activity.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogAction className="w-full h-11 rounded-2xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold tracking-wide">
+                  I Understand & Agree
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </div>
           </AlertDialogContent>
-        </AlertDialog>{" "}
-        of Roktoneer.
+        </AlertDialog>
+
+        <span> of RoktoNeer.</span>
       </FieldLabel>
     </div>
   );
