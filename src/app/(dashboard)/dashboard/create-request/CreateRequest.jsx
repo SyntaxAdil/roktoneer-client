@@ -19,11 +19,7 @@ import {
   Phone,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import {
-  bdDistricts,
-  bdUpazilas,
-  bloodGroupsInfo,
-} from "@/assets/staticDatas";
+import { bdDistricts, bdUpazilas, bloodGroupsInfo } from "@/assets/staticDatas";
 import {
   Select,
   SelectContent,
@@ -62,9 +58,7 @@ export default function CreateRequestPage() {
   const selectedBloodGroup = watch("bloodGroup");
 
   const filteredUpazilas = useMemo(() => {
-    return bdUpazilas.filter(
-      (u) => u.district_id === String(selectedDistrict),
-    );
+    return bdUpazilas.filter((u) => u.district_id === String(selectedDistrict));
   }, [selectedDistrict]);
 
   const onSubmit = async (data) => {
@@ -123,7 +117,8 @@ export default function CreateRequestPage() {
             Create Blood Request
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Fill out the form below to post a new blood requirements board listing.
+            Fill out the form below to post a new blood requirements board
+            listing.
           </p>
         </div>
 
@@ -161,7 +156,9 @@ export default function CreateRequestPage() {
                 Recipient Name
               </label>
               <input
-                {...register("recipientName", { required: "Recipient name is required" })}
+                {...register("recipientName", {
+                  required: "Recipient name is required",
+                })}
                 type="text"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
               />
@@ -198,7 +195,9 @@ export default function CreateRequestPage() {
               </Select>
               <input
                 type="hidden"
-                {...register("bloodGroup", { required: "Blood group is required" })}
+                {...register("bloodGroup", {
+                  required: "Blood group is required",
+                })}
               />
               {errors.bloodGroup && (
                 <span className="text-[10px] font-bold text-red-500 block">
@@ -215,7 +214,9 @@ export default function CreateRequestPage() {
               <Select
                 value={selectedDistrict || ""}
                 onValueChange={(value) => {
-                  setValue("recipientDistrict", value, { shouldValidate: true });
+                  setValue("recipientDistrict", value, {
+                    shouldValidate: true,
+                  });
                   setValue("recipientUpazila", "");
                 }}
               >
@@ -234,7 +235,9 @@ export default function CreateRequestPage() {
               </Select>
               <input
                 type="hidden"
-                {...register("recipientDistrict", { required: "District is required" })}
+                {...register("recipientDistrict", {
+                  required: "District is required",
+                })}
               />
               {errors.recipientDistrict && (
                 <span className="text-[10px] font-bold text-red-500 block">
@@ -270,7 +273,9 @@ export default function CreateRequestPage() {
               </Select>
               <input
                 type="hidden"
-                {...register("recipientUpazila", { required: "Upazila is required" })}
+                {...register("recipientUpazila", {
+                  required: "Upazila is required",
+                })}
               />
               {errors.recipientUpazila && (
                 <span className="text-[10px] font-bold text-red-500 block">
@@ -285,8 +290,21 @@ export default function CreateRequestPage() {
                 Donation Date
               </label>
               <input
-                {...register("donationDate", { required: "Donation date is required" })}
+                {...register("donationDate", {
+                  required: "Donation date is required",
+                  validate: (value) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const selectedDate = new Date(value);
+
+                    return (
+                      selectedDate >= today || "Past dates are not allowed"
+                    );
+                  },
+                })}
                 type="date"
+                min={new Date().toISOString().split("T")[0]}
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all cursor-pointer"
               />
               {errors.donationDate && (
@@ -302,7 +320,9 @@ export default function CreateRequestPage() {
                 Donation Time
               </label>
               <input
-                {...register("donationTime", { required: "Donation time is required" })}
+                {...register("donationTime", {
+                  required: "Donation time is required",
+                })}
                 type="time"
                 className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all cursor-pointer"
               />
@@ -344,7 +364,9 @@ export default function CreateRequestPage() {
               Hospital Name
             </label>
             <input
-              {...register("hospitalName", { required: "Hospital name is required" })}
+              {...register("hospitalName", {
+                required: "Hospital name is required",
+              })}
               type="text"
               className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
             />
@@ -361,7 +383,9 @@ export default function CreateRequestPage() {
               Full Address
             </label>
             <input
-              {...register("fullAddress", { required: "Full address is required" })}
+              {...register("fullAddress", {
+                required: "Full address is required",
+              })}
               type="text"
               placeholder="e.g. Ward 4, House 12, Mirpur 10"
               className="w-full h-11 px-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all"
@@ -379,7 +403,9 @@ export default function CreateRequestPage() {
               Request Message
             </label>
             <textarea
-              {...register("requestMessage", { required: "Request message is required" })}
+              {...register("requestMessage", {
+                required: "Request message is required",
+              })}
               rows={4}
               placeholder="State why blood is needed or any specific instructions..."
               className="w-full p-4 text-sm font-semibold rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border border-zinc-200/60 dark:border-zinc-800/60 focus:border-red-500 focus:outline-none transition-all resize-none"
