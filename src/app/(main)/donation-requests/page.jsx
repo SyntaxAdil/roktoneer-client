@@ -1,5 +1,7 @@
 import DonationRequestPage from "./DonationRequestPage";
-
+export const metadata = {
+  title: "Donation Requests | Roktoneer",
+};  
 async function getPendingRequests({
   page = 1,
   bloodGroup = "",

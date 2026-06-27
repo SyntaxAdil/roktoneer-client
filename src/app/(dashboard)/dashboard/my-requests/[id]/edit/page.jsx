@@ -4,6 +4,14 @@ import EditDonationRequestClient from "./EditDonationRequestClient";
 import { auth } from "../../../../../../lib/auth/auth";
 import DashboardHeader from "../../../../../../components/dashboard/DashboardHeader";
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+
+  return {
+    title: `Edit Request ${id}`,
+    description: `Edit details of blood donation request ${id}`,
+  };
+} 
 async function getRequestDetails(id) {
   const { token } = await auth.api.getToken({
     headers: await headers(),

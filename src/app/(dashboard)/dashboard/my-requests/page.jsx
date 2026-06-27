@@ -7,7 +7,9 @@ import { Loader2 } from "lucide-react";
 import DonationRequestsClient from "./DonationRequestsClient";
 
 import DashboardHeader from "../../../../components/dashboard/DashboardHeader";
-
+export const metadata = {
+  title: "My Requests | Roktoneer",
+};
 export default async function MyRequestsPage({
   searchParams,
 }) {

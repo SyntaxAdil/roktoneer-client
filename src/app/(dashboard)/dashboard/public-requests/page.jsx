@@ -6,7 +6,9 @@ import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import PublicRequestsClient from "./PublicRequestsClient";
 import DashboardHeader from "../../../../components/dashboard/DashboardHeader";
-
+export const metadata = {
+  title: "Public Requests | Roktoneer",
+};
 export default async function PublicRequestsPage({
   searchParams,
 }) {

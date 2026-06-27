@@ -6,6 +6,10 @@ import AllUsersClient from "./AllUsersClient";
 import { Loader2 } from "lucide-react";
 import DashboardHeader from "../../../../components/dashboard/DashboardHeader";
 
+export const metadata = {
+  title: "All users | Roktoneer",
+};  
+
 export default async function AllUsersPage({
   searchParams,
 }) {

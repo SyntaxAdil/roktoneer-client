@@ -8,6 +8,9 @@ import DonorDashboard from "@/components/dashboard/DonorDashboard";
 
 import DashboardHeader from "../../../components/dashboard/DashboardHeader";
 
+export const metadata = {
+  title: "Dashboard | Roktoneer",
+};
 async function getFundCount() {
 
   try {

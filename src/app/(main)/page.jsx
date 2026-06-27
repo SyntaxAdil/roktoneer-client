@@ -7,6 +7,10 @@ import FeatureSection from '../../components/home/FeaturedSection'
 import BloodMatrixSection from '../../components/home/BloodMatrixSection'
 import ContactSection from '../../components/home/ContactSection'
 import FindDonorSection from '../../components/home/FindDonarSection'
+
+export const metadata = {
+  title: "Home | Roktoneer",
+};
 async function getDonors() {
   try {
     const res = await fetch(

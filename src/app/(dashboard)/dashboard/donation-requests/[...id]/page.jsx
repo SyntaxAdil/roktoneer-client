@@ -6,6 +6,14 @@ import { Loader2 } from "lucide-react";
 import DonationRequestClient from "../../my-requests/[id]/DonationRequestClient";
 import DashboardHeader from "../../../../../components/dashboard/DashboardHeader";
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+
+  return {
+    title: `Donation Request ${id}`,
+    description: `View details of blood donation request ${id}`,
+  };
+}
 
 export default async function DonationRequestDetails({ params }) {
   const session = await auth.api.getSession({
@@ -55,15 +63,17 @@ export default async function DonationRequestDetails({ params }) {
 
   return (
     <>
-    <DashboardHeader title="Request Detailes" ></DashboardHeader>
-    <Suspense
-      fallback={
-        <div className="w-full min-h-[400px] flex items-center justify-center">
-          <Loader2 className="size-6 animate-spin text-red-500" />
-        </div>
-      }
-    >
-      <DonationRequestClient request={requestData} />
-    </Suspense></>
+      <DashboardHeader title="Request Detailes" />
+
+      <Suspense
+        fallback={
+          <div className="w-full min-h-[400px] flex items-center justify-center">
+            <Loader2 className="size-6 animate-spin text-red-500" />
+          </div>
+        }
+      >
+        <DonationRequestClient request={requestData} />
+      </Suspense>
+    </>
   );
 }

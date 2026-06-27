@@ -1,5 +1,9 @@
 import FindDonorPage from "./FindDonarPage";
 
+export const metadata = {
+  title: "Find Donors | Roktoneer",
+};
+
 async function getInitialDonors() {
   try {
     const res = await fetch(
