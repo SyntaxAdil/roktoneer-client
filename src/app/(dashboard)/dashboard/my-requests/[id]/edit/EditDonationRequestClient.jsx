@@ -48,7 +48,7 @@ export default function EditDonationRequestClient({ initialData, id }) {
 
       donationTime: initialData?.donationTime || "",
 
-      description: initialData?.description || "",
+      description: initialData?.requestMessage || "",
     },
   });
 

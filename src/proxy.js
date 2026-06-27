@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth } from "./lib/auth/auth";
 import { headers } from "next/headers";
+import { auth } from "./lib/auth/auth.js";
+
+
 
 export async function proxy(request) {
   const session = await auth.api.getSession({
@@ -16,102 +18,59 @@ export async function proxy(request) {
     pathname.startsWith("/login") ||
     pathname.startsWith("/register");
 
-  const isDashboardRoute =
-    pathname.startsWith("/dashboard");
-
   if (user && isAuthPage) {
-    if (role === "admin" || role === "volunteer") {
-      return NextResponse.redirect(
-        new URL("/dashboard", request.url)
-      );
-    }
+    return NextResponse.redirect(
+      new URL(
+        role === "admin" || role === "volunteer"
+          ? "/dashboard"
+          : "/",
+        request.url
+      )
+    );
+  }
 
+  const protectedRoutes = [
+    "/dashboard",
+    "/donors",
+    "/fundings",
+  ];
+
+  const isProtected = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (isProtected && !user) {
+    return NextResponse.redirect(
+      new URL("/login", request.url)
+    );
+  }
+
+  if (
+    isProtected &&
+    !["admin", "volunteer", "donor"].includes(role)
+  ) {
     return NextResponse.redirect(
       new URL("/", request.url)
     );
   }
 
-  const protectedRoutes = [
-    "/donors",
-    "/fundings",
-  ];
-
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  if (isProtectedRoute) {
-    if (!user) {
-      const loginUrl = new URL("/login", request.url);
-
-      loginUrl.searchParams.set(
-        "message",
-        "Please login first"
-      );
-
-      return NextResponse.redirect(loginUrl);
-    }
-
-    if (
-  !["admin", "volunteer", "donor"].includes(role)
-) {
-  return NextResponse.redirect(
-    new URL("/", request.url)
-  );
-}
+  if (
+    pathname.startsWith("/dashboard/all-users") &&
+    role !== "admin"
+  ) {
+    return NextResponse.redirect(
+      new URL("/", request.url)
+    );
   }
 
-  if (isDashboardRoute) {
-    if (!user) {
-      const loginUrl = new URL("/login", request.url);
-
-      loginUrl.searchParams.set(
-        "message",
-        "Please login first"
-      );
-
-      return NextResponse.redirect(loginUrl);
-    }
-
-    const adminOnlyRoutes = [
-      "/dashboard/all-users",
-    ];
-
-    const adminVolunteerRoutes = [
-      "/dashboard/public-requests",
-    ];
-
-    const isAdminOnly = adminOnlyRoutes.some((route) =>
-      pathname.startsWith(route)
+  if (
+    pathname.startsWith("/dashboard/public-requests") &&
+    role !== "admin" &&
+    role !== "volunteer"
+  ) {
+    return NextResponse.redirect(
+      new URL("/", request.url)
     );
-
-    const isAdminVolunteer = adminVolunteerRoutes.some((route) =>
-      pathname.startsWith(route)
-    );
-
-    if (isAdminOnly && role !== "admin") {
-      return NextResponse.redirect(
-        new URL("/", request.url)
-      );
-    }
-
-    if (
-      isAdminVolunteer &&
-      role !== "admin" &&
-      role !== "volunteer"
-    ) {
-      return NextResponse.redirect(
-        new URL("/", request.url)
-      );
-    }
-
-    if (
-      !["admin", "volunteer", "donor"].includes(role)
-    ) {
-      return NextResponse.redirect(
-        new URL("/", request.url)
-      );
-    }
   }
 
   return NextResponse.next();
@@ -122,7 +81,7 @@ export const config = {
     "/login",
     "/register",
     "/dashboard/:path*",
-    "/donors/:path*",
-    "/fundings/:path*",
+    "/donors",
+    "/fundings",
   ],
 };
