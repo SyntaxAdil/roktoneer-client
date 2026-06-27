@@ -60,18 +60,40 @@ async function getActiveDonarsCount() {
   }
 }
 
+async function getFundCount() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/funds/total-funds`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    const result = await res.json();
+
+    return result.success ? result.totalFunds : 0;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+
+
 
 const HomePage = async() => {
   const donors=await getDonors()
   const pendingReqEmergency=await getPendingReq()
   const activeDonorsCount=await getActiveDonarsCount()
+  const totalFundsCount=await getFundCount()
+  
   
   
   return (
     <section>
       <DonorMarquee requests={pendingReqEmergency}></DonorMarquee>
       <Hero totalDonarActive={activeDonorsCount}></Hero>
-      <StatsSection activeDonorsCount={activeDonorsCount} ></StatsSection>
+      <StatsSection totalFundsCount={totalFundsCount} activeDonorsCount={activeDonorsCount} ></StatsSection>
       <FeatureSection ></FeatureSection>
       <FindDonorSection donars={donors}  ></FindDonorSection>
       <BloodMatrixSection></BloodMatrixSection>

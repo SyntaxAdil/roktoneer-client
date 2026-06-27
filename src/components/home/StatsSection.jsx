@@ -5,11 +5,11 @@ import { NumberTicker } from "../ui/number-ticker";
 
 
 
-export default function StatsSection({activeDonorsCount}) {
+export default function StatsSection({activeDonorsCount,totalFundsCount}) {
   const statsData = [
     { value: Number(activeDonorsCount), label: "TOTAL DONORS", suffix: "+" },
     { value: 64, label: "DISTRICTS COVERED", suffix: "" },
-    { value: 1200, label: "FUNDING (USD)", suffix: "" },
+    { value: Number(totalFundsCount), label: "FUNDING (USD)", suffix: "+" },
     { value: 100, label: "FREE FOREVER", suffix: "%" },
   ];
   return (
