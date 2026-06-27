@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/auth";
 import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import VolunteerDashboard from "@/components/dashboard/VolunteerDashboard";
 import DonorDashboard from "@/components/dashboard/DonorDashboard";
+
 import DashboardHeader from "../../../components/dashboard/DashboardHeader";
 
 export default async function DashboardPage() {
@@ -18,119 +19,175 @@ export default async function DashboardPage() {
     headers: await headers(),
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_URL;
 
   let requests = [];
-
   let stats = {};
 
   try {
-    if (user?.role === "admin") {
-      const [usersRes, requestsRes] = await Promise.all([
-        fetch(`${baseUrl}/api/users?limit=9999`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          cache: "no-store",
-        }),
+    if (
+      user?.role === "admin" ||
+      user?.role === "volunteer"
+    ) {
+      const [
+        donorsRes,
+        requestsRes,
+        usersRes,
+      ] = await Promise.all([
+        fetch(
+          `${baseUrl}/api/active-donors-count`,
+          {
+            cache: "no-store",
+          }
+        ),
 
-        fetch(`${baseUrl}/api/donation-requests/all?limit=6`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          cache: "no-store",
-        }),
+        fetch(
+          `${baseUrl}/api/donation-requests/all?limit=9999`,
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          }
+        ),
+
+        fetch(
+          `${baseUrl}/api/users?limit=9999`,
+          {
+            cache: "no-store",
+          }
+        ),
       ]);
 
-      const usersData = await usersRes.json();
+      const donorsData =
+        await donorsRes.json();
 
-      const requestsData = await requestsRes.json();
+      const requestsData =
+        await requestsRes.json();
 
-      requests = requestsData?.data || [];
+      const usersData =
+        await usersRes.json();
 
-      const allUsers = usersData?.data || [];
+      const allUsers =
+        usersData?.data || [];
+
+      const allRequests =
+        requestsData?.data || [];
+
+      requests = allRequests
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        )
+        .slice(0, 6);
 
       stats = {
-        totalDonors: allUsers.filter((u) => u.role === "donor").length,
+        totalDonors:
+          donorsData?.data || 0,
 
-        totalVolunteers: allUsers.filter((u) => u.role === "volunteer").length,
+        totalVolunteers:
+          allUsers.filter(
+            (u) =>
+              u.role ===
+              "volunteer"
+          ).length,
 
-        totalRequests: requestsData?.total || 0,
+        totalRequests:
+          allRequests.length,
 
         totalFunding: 0,
 
-        pending: requests.filter((r) => r.donationStatus === "pending").length,
+        activeRequests:
+          allRequests.filter(
+            (r) =>
+              r.donationStatus ===
+                "pending" ||
+              r.donationStatus ===
+                "inprogress"
+          ).length,
 
-        inprogress: requests.filter((r) => r.donationStatus === "inprogress")
-          .length,
+        pending:
+          allRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "pending"
+          ).length,
 
-        done: requests.filter((r) => r.donationStatus === "done").length,
+        inprogress:
+          allRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "inprogress"
+          ).length,
 
-        canceled: requests.filter((r) => r.donationStatus === "canceled")
-          .length,
-      };
-    } else if (user?.role === "volunteer") {
-      const [usersRes, requestsRes] = await Promise.all([
-        fetch(`${baseUrl}/api/users?limit=9999`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          cache: "no-store",
-        }),
-
-        fetch(`${baseUrl}/api/donation-requests/all?limit=6`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          cache: "no-store",
-        }),
-      ]);
-
-      const usersData = await usersRes.json();
-
-      const requestsData = await requestsRes.json();
-
-      requests = requestsData?.data || [];
-
-      const allUsers = usersData?.data || [];
-
-      stats = {
-        totalDonors: allUsers.filter((u) => u.role === "donor").length,
-
-        totalRequests: requestsData?.total || 0,
-
-        activeRequests: requests.filter(
+        done: allRequests.filter(
           (r) =>
-            r.donationStatus === "pending" || r.donationStatus === "inprogress",
+            r.donationStatus ===
+            "done"
         ).length,
+
+        canceled:
+          allRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "canceled"
+          ).length,
       };
     } else {
       const res = await fetch(
-        `${baseUrl}/api/donation-request/${user?.email}?limit=6`,
+        `${baseUrl}/api/donation-request/${user?.email}?limit=9999`,
         {
           headers: {
             authorization: `Bearer ${token}`,
           },
           cache: "no-store",
-        },
+        }
       );
 
       const result = await res.json();
 
-      requests = result?.data || [];
+      const myRequests =
+        result?.data || [];
+
+      requests = myRequests
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        )
+        .slice(0, 6);
 
       stats = {
-        total: result?.total || 0,
+        total: myRequests.length,
 
-        pending: requests.filter((r) => r.donationStatus === "pending").length,
+        pending:
+          myRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "pending"
+          ).length,
 
-        inprogress: requests.filter((r) => r.donationStatus === "inprogress")
-          .length,
+        inprogress:
+          myRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "inprogress"
+          ).length,
 
-        done: requests.filter((r) => r.donationStatus === "done").length,
+        done: myRequests.filter(
+          (r) =>
+            r.donationStatus ===
+            "done"
+        ).length,
 
-        canceled: requests.filter((r) => r.donationStatus === "canceled")
-          .length,
+        canceled:
+          myRequests.filter(
+            (r) =>
+              r.donationStatus ===
+              "canceled"
+          ).length,
       };
     }
   } catch (error) {
@@ -141,24 +198,36 @@ export default async function DashboardPage() {
     case "admin":
       return (
         <>
-          <DashboardHeader></DashboardHeader>
-          <AdminDashboard requests={requests} stats={stats} />
+          <DashboardHeader />
+
+          <AdminDashboard
+            requests={requests}
+            stats={stats}
+          />
         </>
       );
 
     case "volunteer":
       return (
         <>
-          <DashboardHeader></DashboardHeader>{" "}
-          <VolunteerDashboard requests={requests} stats={stats} />
+          <DashboardHeader />
+
+          <VolunteerDashboard
+            requests={requests}
+            stats={stats}
+          />
         </>
       );
 
     default:
       return (
         <>
-          <DashboardHeader></DashboardHeader>
-          <DonorDashboard requests={requests} stats={stats} />
+          <DashboardHeader />
+
+          <DonorDashboard
+            requests={requests}
+            stats={stats}
+          />
         </>
       );
   }
