@@ -39,11 +39,13 @@ import {
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import Logo from "../Logo";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 
 const Navbar = () => {
   const { data: session, refetch } = useSession();
   const user = session?.user;
+  const router=useRouter()
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -80,6 +82,7 @@ const Navbar = () => {
     await authClient.signOut()
     toast.success("Logout Successfull")
     await refetch()
+    router.push("/")
   }
   return (
     <>
