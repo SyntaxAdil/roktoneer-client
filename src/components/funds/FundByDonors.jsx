@@ -89,37 +89,43 @@ export default function FundByDonors({
     }, 0);
   }, [currentPage]);
 
-  const handleGiveFund = async (e) => {
-    e.preventDefault();
+const handleGiveFund = async (e) => {
 
-    if (!amount || isNaN(Number(amount))) return;
+  e.preventDefault();
 
-    try {
-      const res = await fetch(`${baseUrl}/api/funds/donate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          amount: Number(amount)
-        })
-      });
+  if (!amount) return;
 
-      const result = await res.json();
+  try {
 
-      if (result.success) {
-        setTotalFunds((prev) => prev + Number(amount));
+    const res = await fetch("/api/checkout_sessions", {
 
-        setAmount("");
-        setOpen(false);
+      method: "POST",
 
-        fetchUsers(currentPage);
-      }
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-    } catch (err) {
-      console.error(err);
+      body: JSON.stringify({
+        amount: Number(amount)
+      })
+
+    });
+
+    const result = await res.json();
+
+    if (result?.success && result?.url) {
+
+      window.location.href = result.url;
+
     }
-  };
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
+};
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";

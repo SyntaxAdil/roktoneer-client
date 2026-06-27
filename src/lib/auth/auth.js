@@ -31,7 +31,17 @@ export const auth = betterAuth({
   plugins: [jwt()],
   user: {
   additionalFields: {
-
+    fund: {
+      type: "number",
+      required: false,
+      defaultValue: 0,
+    },  
+    fundDate: {
+      type: "string",
+      required: false,
+      defaultValue: null,
+    }
+    ,
     status:{
       type:"string",
       
