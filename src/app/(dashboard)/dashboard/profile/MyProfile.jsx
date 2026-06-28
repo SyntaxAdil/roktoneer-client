@@ -1,16 +1,16 @@
-
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "motion/react";
 import { useSession, authClient } from "../../../../lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+
 import {
   User,
   Mail,
-  Phone,
+ Phone,
   Heart,
   MapPin,
   Building,
@@ -20,6 +20,7 @@ import {
   Loader2,
   Upload,
 } from "lucide-react";
+
 import { toast } from "react-hot-toast";
 
 import {
@@ -31,78 +32,87 @@ import {
   SelectValue,
 } from "../../../../components/ui/select";
 
-import { bdDistricts, bdUpazilas, bloodGroupsInfo } from "@/assets/staticDatas";
+import {
+  bdDistricts,
+  bdUpazilas,
+  bloodGroupsInfo,
+} from "@/assets/staticDatas";
 
 const bloodGroups = bloodGroupsInfo.map((i) => i.group);
 
 export default function MyProfile() {
   const { data: session, isPending } = useSession();
+
   const router = useRouter();
+
+  const user = session?.user;
 
   const [isEditing, setIsEditing] = useState(false);
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [districtId, setDistrictId] = useState("");
   const [imagePreview, setImagePreview] = useState("");
 
-  const user = session?.user;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      name: "",
+      picture: "",
+      phoneNumber: "",
+      bloodGroup: "",
+      district: "",
+      upazila: "",
+    },
+  });
 
-  const { register, handleSubmit, reset, setValue, watch } = useForm({
-    values: {
+  useEffect(() => {
+    if (!user) return;
+
+    reset({
       name: user?.name || "",
       picture: "",
       phoneNumber: user?.phoneNumber || "",
       bloodGroup: user?.bloodGroup || "",
       district: user?.district || "",
       upazila: user?.upazila || "",
-    },
-  });
+    });
 
-  const selectedBloodGroup = watch("bloodGroup");
-  const selectedDistrict = watch("district");
-  const selectedUpazila = watch("upazila");
+    setImagePreview(user?.image || "");
+  }, [user, reset]);
 
-  useEffect(() => {
-    if (user?.image) {
-      setImagePreview(user.image);
-    }
-  }, [user]);
+  const bloodGroup =
+    watch("bloodGroup") || user?.bloodGroup || "";
 
-  useEffect(() => {
-    if (user?.district) {
-      const district = bdDistricts.find(
-        (d) => d.name === user.district,
-      );
+  const district =
+    watch("district") || user?.district || "";
 
-      if (district) {
-        setDistrictId(String(district.id));
-      }
-    }
-  }, [user]);
+  const upazila =
+    watch("upazila") || user?.upazila || "";
 
-  useEffect(() => {
-    const district = bdDistricts.find((d) => d.name === selectedDistrict);
+  const selectedDistrict = useMemo(() => {
+    return bdDistricts.find((d) => d.name === district);
+  }, [district]);
 
-    if (district) {
-      setDistrictId(String(district.id));
-    }
+  const filteredUpazilas = useMemo(() => {
+    return bdUpazilas.filter(
+      (u) =>
+        String(u.district_id) ===
+        String(selectedDistrict?.id),
+    );
   }, [selectedDistrict]);
 
-  if (isPending) {
-    return (
-      <div className="w-full min-h-[70vh] flex items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-red-500" />
-      </div>
-    );
-  }
-
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
 
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-      setValue("picture", e.target.files);
-    }
+    if (!file) return;
+
+    setImagePreview(URL.createObjectURL(file));
+
+    setValue("picture", e.target.files);
   };
 
   const onSubmit = async (data) => {
@@ -114,28 +124,23 @@ export default function MyProfile() {
 
       if (data.picture && data.picture[0]) {
         const formData = new FormData();
+
         formData.append("image", data.picture[0]);
 
-        const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_API;
-
         const response = await fetch(
-          `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+          `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API}`,
           {
             method: "POST",
             body: formData,
           },
         );
 
-        const resData = await response.json();
+        const result = await response.json();
 
-        if (resData.success) {
-          imageUrl = resData.data.url;
+        if (result.success) {
+          imageUrl = result.data.url;
         }
       }
-
-      const selectedUpazilaData = bdUpazilas.find(
-        (u) => String(u.id) === String(data.upazila),
-      );
 
       const { error } = await authClient.updateUser(
         {
@@ -144,31 +149,46 @@ export default function MyProfile() {
           phoneNumber: data.phoneNumber,
           bloodGroup: data.bloodGroup,
           district: data.district,
-          upazila: selectedUpazilaData?.name || "",
+          upazila: data.upazila,
         },
         {
           onSuccess: () => {
-            toast.success("Profile Updated Successfully!");
+            toast.success("Profile Updated Successfully");
+
             setIsEditing(false);
             setIsSubmitting(false);
+
             router.refresh();
           },
+
           onError: (ctx) => {
             setIsSubmitting(false);
-            setServerError(ctx?.error?.message || "Something went wrong.");
+
+            setServerError(
+              ctx?.error?.message || "Something went wrong",
+            );
           },
         },
       );
 
       if (error) {
         setIsSubmitting(false);
-        setServerError(error.message || "Something went wrong.");
+
+        setServerError(error.message || "Something went wrong");
       }
     } catch (error) {
       setIsSubmitting(false);
-      setServerError("Something went wrong.");
+      setServerError("Something went wrong");
     }
   };
+
+  if (isPending) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+        <Loader2 className="size-7 animate-spin text-red-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-8">
@@ -186,6 +206,7 @@ export default function MyProfile() {
                 <Image
                   src={
                     imagePreview ||
+                    user?.image ||
                     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300"
                   }
                   alt="Profile"
@@ -197,7 +218,10 @@ export default function MyProfile() {
                   <label className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-all">
                     <div className="flex flex-col items-center gap-1 text-white">
                       <Upload className="size-5" />
-                      <span className="text-[10px] font-semibold">Upload</span>
+
+                      <span className="text-[10px] font-semibold">
+                        Upload
+                      </span>
                     </div>
 
                     <input
@@ -230,7 +254,18 @@ export default function MyProfile() {
             <button
               type="button"
               onClick={() => {
-                if (isEditing) reset();
+                if (isEditing) {
+                  reset({
+                    name: user?.name || "",
+                    picture: "",
+                    phoneNumber: user?.phoneNumber || "",
+                    bloodGroup: user?.bloodGroup || "",
+                    district: user?.district || "",
+                    upazila: user?.upazila || "",
+                  });
+
+                  setImagePreview(user?.image || "");
+                }
 
                 setIsEditing(!isEditing);
                 setServerError("");
@@ -307,17 +342,19 @@ export default function MyProfile() {
 
                 <Select
                   disabled={!isEditing}
-                  value={selectedBloodGroup || ""}
-                  onValueChange={(value) => setValue("bloodGroup", value)}
+                  value={bloodGroup}
+                  onValueChange={(value) =>
+                    setValue("bloodGroup", value)
+                  }
                 >
-                  <SelectTrigger className="w-full h-12 rounded-2xl">
+                  <SelectTrigger className="w-full h-12 rounded-2xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40">
                     <SelectValue placeholder="Select Blood Group" />
                   </SelectTrigger>
 
                   <SelectContent>
                     <SelectGroup>
-                      {bloodGroups.map((group, idx) => (
-                        <SelectItem key={idx} value={group}>
+                      {bloodGroups.map((group) => (
+                        <SelectItem key={group} value={group}>
                           {group}
                         </SelectItem>
                       ))}
@@ -334,28 +371,20 @@ export default function MyProfile() {
 
                 <Select
                   disabled={!isEditing}
-                  value={
-                    bdDistricts.find((d) => d.name === selectedDistrict)?.id ||
-                    ""
-                  }
+                  value={district}
                   onValueChange={(value) => {
-                    const district = bdDistricts.find((d) => d.id === value);
-
-                    setDistrictId(value);
-
-                    setValue("district", district?.name || "");
-
+                    setValue("district", value);
                     setValue("upazila", "");
                   }}
                 >
-                  <SelectTrigger className="w-full h-12 rounded-2xl">
+                  <SelectTrigger className="w-full h-12 rounded-2xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40">
                     <SelectValue placeholder="Select District" />
                   </SelectTrigger>
 
                   <SelectContent>
                     <SelectGroup>
                       {bdDistricts.map((d) => (
-                        <SelectItem key={d.id} value={String(d.id)}>
+                        <SelectItem key={d.id} value={d.name}>
                           {d.name}
                         </SelectItem>
                       ))}
@@ -371,28 +400,23 @@ export default function MyProfile() {
                 </label>
 
                 <Select
-                  disabled={!isEditing || !districtId}
-                  value={selectedUpazila || ""}
+                  disabled={!isEditing || !district}
+                  value={upazila}
                   onValueChange={(value) => {
                     setValue("upazila", value);
                   }}
                 >
-                  <SelectTrigger className="w-full h-12 rounded-2xl">
+                  <SelectTrigger className="w-full h-12 rounded-2xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40">
                     <SelectValue placeholder="Select Upazila" />
                   </SelectTrigger>
 
                   <SelectContent>
                     <SelectGroup>
-                      {bdUpazilas
-                        .filter(
-                          (u) =>
-                            String(u.district_id) === String(districtId),
-                        )
-                        .map((u) => (
-                          <SelectItem key={u.id} value={String(u.id)}>
-                            {u.name}
-                          </SelectItem>
-                        ))}
+                      {filteredUpazilas.map((u) => (
+                        <SelectItem key={u.id} value={u.name}>
+                          {u.name}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>

@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "next-themes";
+import PopUpForProfile from "../components/shared/PopUpForProfile";
 // Font inter
 const inter = Inter({
   variable: "--font-inter",
@@ -43,6 +44,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <main className="grow flex flex-col">{children}</main>
           <Toaster></Toaster>
+          <PopUpForProfile></PopUpForProfile>
         </ThemeProvider>
       </body>
     </html>

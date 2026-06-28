@@ -10,6 +10,7 @@ export default function MainLayout({ children }) {
       <main className="  flex-1">{children}</main>
       
       <Footer></Footer>
+      
     </section>
   );
 }
